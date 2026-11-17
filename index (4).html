@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Robottino</title>
+<style>
+:root{--bg:#e9eef4;--fg:#18212d;--muted:#5a6676;--card:#fff;--line:#c9d2de;--accent:#0b8fb3;--accent-fg:#fff;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0d1117;--fg:#e8edf4;--muted:#93a0b2;--card:#151b24;--line:#2a3340;--accent:#5fe3ff;--accent-fg:#06222b;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0d1117;--fg:#e8edf4;--muted:#93a0b2;--card:#151b24;--line:#2a3340;--accent:#5fe3ff;--accent-fg:#06222b;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:"Nunito","Trebuchet MS","Segoe UI",system-ui,sans-serif;min-height:100%;display:flex;flex-direction:column;align-items:center;padding:16px}
+main{width:100%;max-width:520px;display:flex;flex-direction:column;gap:14px}
+.screen{background:#070b12;border-radius:36px;border:6px solid var(--line);aspect-ratio:4/3;width:100%;overflow:hidden}
+svg{width:100%;height:100%;display:block}
+.say{min-height:3.4em;text-align:center;font-size:1.1rem;line-height:1.4;padding:0 8px}
+button{font:inherit;cursor:pointer}
+#talk{background:var(--accent);color:var(--accent-fg);border:0;border-radius:999px;padding:18px;font-size:1.25rem;font-weight:800}
+#talk:active{transform:scale(.98)}
+#talk[aria-pressed="true"]{outline:4px solid var(--fg)}
+.row{display:flex;gap:8px}
+input[type=text],input[type=password]{flex:1;min-width:0;background:var(--card);color:var(--fg);border:1px solid var(--line);border-radius:12px;padding:12px;font:inherit}
+.row button{background:var(--card);color:var(--fg);border:1px solid var(--line);border-radius:12px;padding:12px 16px}
+label{display:flex;align-items:center;gap:10px;font-size:.95rem;color:var(--muted)}
+label input[type=range]{flex:1}
+details{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+summary{cursor:pointer;font-weight:700}
+details .row,details label{margin-top:10px}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+</style>
+</head>
+<body>
+<main>
+<div class="screen">
+<svg viewBox="0 0 400 300" role="img" aria-label="Faccia del robot">
+<defs>
+<clipPath id="cl"><rect id="clr" x="70" y="60" width="80" height="90" rx="28"/></clipPath>
+<clipPath id="cr"><rect id="crr" x="250" y="60" width="80" height="90" rx="28"/></clipPath>
+</defs>
+<g><rect id="rl" x="70" y="60" width="80" height="90" rx="28" fill="#5fe3ff"/>
+<g clip-path="url(#cl)"><circle id="chl" cx="110" cy="200" r="70" fill="#070b12"/><polygon id="lidl" points="0,0 0,0 0,0" fill="#070b12"/></g></g>
+<g><rect id="rr" x="250" y="60" width="80" height="90" rx="28" fill="#5fe3ff"/>
+<g clip-path="url(#cr)"><circle id="chr" cx="290" cy="200" r="70" fill="#070b12"/><polygon id="lidr" points="0,0 0,0 0,0" fill="#070b12"/></g></g>
+<path id="mouth" d="" fill="#5fe3ff" stroke="#5fe3ff" stroke-width="7" stroke-linejoin="round"/>
+</svg>
+</div>
+<div class="say" id="say" aria-live="polite">Tocca <b>Parla</b> e dimmi qualcosa.</div>
+<button id="talk" aria-pressed="false">Parla</button>
+<div class="row"><input id="txt" type="text" placeholder="Oppure scrivi qui" aria-label="Scrivi una frase"><button id="go">Invia</button></div>
+<label>Voce acuta <input id="pitch" type="range" min="1" max="2" step="0.05" value="1.8" aria-label="Acutezza della voce"></label>
+<details id="set">
+<summary>Impostazioni</summary>
+<div class="row"><input id="key" type="password" placeholder="Chiave API di Gemini" autocomplete="off" aria-label="Chiave API di Gemini"><button id="savekey">Salva</button></div>
+<div class="row"><input id="model" type="text" value="gemini-2.5-flash" aria-label="Nome del modello"></div>
+<label><input id="echo" type="checkbox"> Ripeti soltanto, senza IA</label>
+</details>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+const sayEl=$('say'),talk=$('talk');
+const store={get(k){try{return localStorage.getItem(k)||'';}catch(_){return '';}},set(k,v){try{localStorage.setItem(k,v);}catch(_){}}};
+$('key').value=store.get('gk');
+if(store.get('gm'))$('model').value=store.get('gm');
+$('savekey').addEventListener('click',()=>{store.set('gk',$('key').value.trim());store.set('gm',$('model').value.trim());$('set').open=false;sayEl.textContent='Salvato!';});
+if(!store.get('gk'))$('set').open=true;
+
+/* ---------- faccia ---------- */
+let mood='idle',speaking=false;
+const cur={h:90,cheek:0,lid:0,o:0,gx:0,gy:0,blink:1,smile:12};
+const M={idle:{h:90,cheek:0,lid:0,s:12},listen:{h:108,cheek:0,lid:0,s:8},think:{h:84,cheek:0,lid:.25,s:4},happy:{h:80,cheek:.7,lid:0,s:20},sad:{h:88,cheek:0,lid:.6,s:-14},surprised:{h:118,cheek:0,lid:0,s:6}};
+let gt={x:0,y:0},nextGaze=0,nextBlink=1500,blinkT=-1;
+const lerp=(a,b,k)=>a+(b-a)*k;
+function frame(t){
+  const m=M[mood];
+  cur.h=lerp(cur.h,m.h,.15);cur.cheek=lerp(cur.cheek,m.cheek,.15);cur.lid=lerp(cur.lid,m.lid,.15);cur.smile=lerp(cur.smile,m.s,.15);
+  if(t>nextGaze){
+    if(mood==='listen'||mood==='surprised')gt={x:0,y:-4};
+    else if(mood==='think')gt={x:18,y:-12};
+    else gt={x:(Math.random()*2-1)*16,y:(Math.random()*2-1)*8};
+    nextGaze=t+900+Math.random()*2000;
+  }
+  cur.gx=lerp(cur.gx,gt.x,.12);cur.gy=lerp(cur.gy,gt.y,.12);
+  if(blinkT<0&&t>nextBlink)blinkT=t;
+  if(blinkT>=0){const p=(t-blinkT)/160;if(p>=1){blinkT=-1;cur.blink=1;nextBlink=t+1800+Math.random()*3500;}else cur.blink=1-Math.sin(p*Math.PI)*.92;}
+  const target=speaking?(.25+.75*Math.abs(Math.sin(t/105+Math.sin(t/230)*2))):0;
+  cur.o=lerp(cur.o,target,.35);
+  draw();requestAnimationFrame(frame);
+}
+function eye(s,cx,dir){
+  const h=Math.max(cur.h*cur.blink,6),y=105-h/2+cur.gy,x=cx-40+cur.gx;
+  for(const id of ['r'+s,s==='l'?'clr':'crr']){const e=$(id);e.setAttribute('x',x);e.setAttribute('y',y);e.setAttribute('height',h);}
+  const ch=$('ch'+s);ch.setAttribute('cx',cx+cur.gx);ch.setAttribute('cy',y+h+62-cur.cheek*h*.75);
+  const l=cur.lid*h*.9,x0=x-5,x1=x+85,yt=y-5,a=dir>0?l*1.6:0,b=dir>0?0:l*1.6;
+  $('lid'+s).setAttribute('points',`${x0},${yt} ${x1},${yt} ${x1},${yt+b} ${x0},${yt+a}`);
+}
+function draw(){
+  eye('l',110,1);eye('r',290,-1);
+  const o=cur.o*46,y=228+cur.gy*.4,cx=200+cur.gx*.5,w=32+cur.o*6,s=cur.smile;
+  $('mouth').setAttribute('d',`M${cx-w},${y} Q${cx},${y+s} ${cx+w},${y} Q${cx},${y+s+o} ${cx-w},${y} Z`);
+}
+requestAnimationFrame(frame);
+
+/* ---------- voce ---------- */
+let voices=[];
+function loadVoices(){voices=speechSynthesis.getVoices().filter(v=>v.lang&&v.lang.toLowerCase().startsWith('it'));}
+if('speechSynthesis' in window){loadVoices();speechSynthesis.onvoiceschanged=loadVoices;}
+function say(text,m){
+  text=(text||'').trim();if(!text)return;
+  sayEl.textContent='“'+text+'”';
+  if(!('speechSynthesis' in window)){sayEl.textContent='Questo browser non legge ad alta voce.';mood='idle';return;}
+  speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(text);
+  u.lang='it-IT';if(voices[0])u.voice=voices[0];
+  u.pitch=parseFloat($('pitch').value);u.rate=1.08;
+  u.onstart=()=>{speaking=true;mood=m||'happy';};
+  u.onboundary=()=>{cur.o=1;};
+  const end=()=>{speaking=false;mood='idle';};
+  u.onend=end;u.onerror=end;
+  speechSynthesis.speak(u);
+}
+
+/* ---------- Gemini ---------- */
+const SYS='Sei un robottino giocattolo simpatico e curioso che parla con un adulto. Rispondi sempre in italiano, con una o due frasi brevi e semplici, tono allegro. Inizia la risposta con un solo tag tra [felice], [curioso], [triste], [sorpreso] che indica la tua emozione, poi la frase.';
+const TAGS={felice:'happy',curioso:'listen',triste:'sad',sorpreso:'surprised'};
+let hist=[];
+async function ask(text){
+  const key=store.get('gk');
+  if(!key||$('echo').checked){say(text);return;}
+  mood='think';sayEl.textContent='Sto pensando…';
+  hist.push({role:'user',parts:[{text}]});hist=hist.slice(-12);
+  try{
+    const model=($('model').value||'gemini-2.5-flash').trim();
+    const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/'+encodeURIComponent(model)+':generateContent',{
+      method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':key},
+      body:JSON.stringify({systemInstruction:{parts:[{text:SYS}]},contents:hist,generationConfig:{maxOutputTokens:600}})});
+    if(!r.ok){
+      hist.pop();mood='sad';
+      const msg={400:'La chiave o il nome del modello non sono validi.',403:'Chiave non autorizzata: creane una nuova su AI Studio.',404:'Modello non trovato: cambia il nome nelle impostazioni.',429:'Troppe richieste, aspetta un minuto e riprova.'}[r.status]||('Errore '+r.status+' da Gemini.');
+      sayEl.textContent=msg;setTimeout(()=>{if(!speaking)mood='idle';},2500);return;
+    }
+    const j=await r.json();
+    let t=((j.candidates&&j.candidates[0]&&j.candidates[0].content&&j.candidates[0].content.parts)||[]).map(p=>p.text||'').join('').trim();
+    if(!t){hist.pop();mood='idle';sayEl.textContent='Non ho una risposta, riprova.';return;}
+    hist.push({role:'model',parts:[{text:t}]});
+    let m='happy';const mt=t.match(/^\s*\[(\w+)\]\s*/);
+    if(mt){m=TAGS[mt[1].toLowerCase()]||'happy';t=t.slice(mt[0].length);}
+    say(t,m);
+  }catch(_){hist.pop();mood='sad';sayEl.textContent='Non riesco a collegarmi: controlla la connessione.';setTimeout(()=>{if(!speaking)mood='idle';},2500);}
+}
+
+/* ---------- ascolto ---------- */
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+let rec=null,listening=false;
+function setListen(on){listening=on;talk.setAttribute('aria-pressed',on);talk.textContent=on?'Ti ascolto…':'Parla';if(on)mood='listen';else if(!speaking&&mood==='listen')mood='idle';}
+talk.addEventListener('click',()=>{
+  if(!SR){sayEl.textContent='Il microfono non è disponibile qui: scrivi nel campo sotto.';return;}
+  if(listening){rec&&rec.stop();return;}
+  speechSynthesis.cancel();speaking=false;
+  rec=new SR();rec.lang='it-IT';rec.interimResults=false;rec.maxAlternatives=1;
+  rec.onstart=()=>setListen(true);
+  rec.onresult=e=>ask(e.results[0][0].transcript);
+  rec.onerror=e=>{setListen(false);
+    sayEl.textContent=(e.error==='not-allowed'||e.error==='service-not-allowed')?'Microfono bloccato: consentilo nelle impostazioni del sito, oppure scrivi nel campo sotto.':(e.error==='no-speech'?'Non ho sentito nulla, riprova.':'Errore del microfono: '+e.error);};
+  rec.onend=()=>setListen(false);
+  try{rec.start();}catch(_){}
+});
+$('go').addEventListener('click',()=>{const v=$('txt').value;$('txt').value='';ask(v);});
+$('txt').addEventListener('keydown',e=>{if(e.key==='Enter')$('go').click();});
+</script>
+</body>
+</html>

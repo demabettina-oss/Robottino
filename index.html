@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="it">
+<html lang="it" data-pack="oceano">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -17,11 +17,17 @@ main{width:100%;max-width:440px;display:flex;flex-direction:column;align-items:c
 .robot-stage{position:relative;width:100%;height:min(68svh,540px);min-height:410px;isolation:isolate;margin:0 auto;touch-action:manipulation;user-select:none}
 .body-slot{position:absolute;inset:40px 0 0 0;width:100%;height:auto;z-index:1;pointer-events:none}
 .robot-body-svg{width:100%;height:100%;display:block;overflow:visible}
-.screen-wrap{position:absolute;top:30px;left:50%;transform:translateX(-50%) perspective(800px);transform-style:preserve-3d;z-index:5;width:56%;max-width:236px;padding:0;background:transparent;animation:headIdle 11s ease-in-out infinite}
+.screen-wrap{will-change:transform;position:absolute;top:30px;left:50%;transform:translateX(-50%) perspective(800px);transform-style:preserve-3d;z-index:5;width:56%;max-width:236px;padding:0;background:transparent;animation:headIdle 11s ease-in-out infinite}
 /* guscio posteriore: dà profondità alla testa */
 .screen-wrap::before{content:"";position:absolute;inset:-7px -7px -12px;border-radius:52px;background:linear-gradient(150deg,#e6edf3,#93a6b6 55%,#5d7080);transform:translateZ(-16px);z-index:-1;box-shadow:0 16px 28px rgba(0,0,0,.26);pointer-events:none}
 /* cuffie metallizzate sopra lo schermo, sul movimento della testa */
-.headphones{position:absolute;left:-14%;top:-18%;width:128%;height:136%;z-index:3;pointer-events:none;overflow:visible}
+.acc-svg{position:absolute;left:-14%;top:-18%;width:128%;height:136%;z-index:3;pointer-events:none;overflow:visible;display:none}
+.cl{display:none}
+#robotStage[data-cloth="mantello"] .cl-mantello,#robotStage[data-cloth="sciarpa"] .cl-sciarpa,#robotStage[data-cloth="natale"] .cl-natale{display:inline}
+.cloth-layer{transform-box:fill-box;transform-origin:center 45%;animation:torsoFloat 3.8s ease-in-out infinite}
+#robotStage[data-cloth="natale"] .acc-svg:not(.acc-natale-cappello){display:none}
+#robotStage[data-cloth="natale"] .acc-natale-cappello{display:block}
+#robotStage[data-acc="cuffie"] .headphones,#robotStage[data-acc="antenna"] .acc-antenna,#robotStage[data-acc="corona"] .acc-corona,#robotStage[data-acc="fiore"] .acc-fiore{display:block}
 /* riflesso lucido sullo schermo */
 .screen::after{content:"";position:absolute;inset:0;border-radius:inherit;background:linear-gradient(160deg,rgba(255,255,255,.16) 0%,rgba(255,255,255,0) 38%);pointer-events:none;z-index:2}
 .screen{background:#070b12;border-radius:44px;border:6px solid transparent;background-clip:padding-box;outline:2px solid rgba(176,198,216,.75);box-shadow:0 8px 24px rgba(0,0,0,.22),inset 0 0 0 2px rgba(95,227,255,.16);aspect-ratio:4/3;width:100%;max-height:29svh;overflow:hidden;position:relative;touch-action:manipulation;user-select:none}
@@ -48,14 +54,17 @@ details .row,details label{margin-top:10px}
 :focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 .mode-btn{font-size:.95rem;padding:10px 14px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--fg)}
 .mode-btn.active{background:var(--accent);color:var(--accent-fg);border-color:var(--accent)}
-.face-hint{display:none}.mode-select{display:none!important}#catFace{display:none!important}
+.face-hint{display:none}
+.theme-monk .robot-body-svg{filter:hue-rotate(200deg) saturate(.85)}
+.theme-monk .screen{outline-color:rgba(255,190,110,.8)}
+.theme-monk .screen{box-shadow:0 8px 24px rgba(0,0,0,.22),inset 0 0 0 2px rgba(255,190,110,.18)}
 
 /* Animazioni coordinate del corpo */
 .robot-body-svg .metal{fill:url(#metalGrad);stroke:#3e4e5b;stroke-width:2.6;stroke-linejoin:round}
 .robot-body-svg .dark-metal{fill:url(#darkMetalGrad);stroke:#16202a;stroke-width:2.6;stroke-linejoin:round}
 .robot-body-svg .blue-part{fill:url(#blueGrad);stroke:#7fe6ff;stroke-width:1.5}
 .robot-body-svg .joint{fill:url(#darkMetalGrad);stroke:#2a3844;stroke-width:2.5}
-.robot-body-svg .glow{filter:url(#blueGlow)}
+.robot-body-svg .glow{filter:none;opacity:.95}
 .robot-body-svg .robot-torso{transform-box:fill-box;transform-origin:center 45%;animation:torsoFloat 3.8s ease-in-out infinite}
 .robot-body-svg #leftArm{transform-box:view-box;transform-origin:122px 222px;animation:armRestL 4.6s ease-in-out infinite}
 .robot-body-svg #rightArm{transform-box:view-box;transform-origin:278px 222px;animation:armRestR 4.2s ease-in-out infinite}
@@ -93,6 +102,36 @@ details .row,details label{margin-top:10px}
 #leftArm .metal,#rightArm .metal{fill:url(#softMetalGrad);stroke:#4d5e6c;stroke-width:2.2}
 #leftArm .dark-metal,#rightArm .dark-metal{fill:url(#wristGrad);stroke:#22303b;stroke-width:2}
 #leftArm .joint,#rightArm .joint{fill:url(#wristGrad);stroke:#22303b;stroke-width:2}
+
+/* ---- Tema vivace: sfondo colorato, pulsanti arrotondati e pannelli morbidi (solo stile, nessuna logica) ---- */
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]) body{background:radial-gradient(circle at 12% 8%,#ffd6ec 0,transparent 38%),radial-gradient(circle at 88% 18%,#c9f0ff 0,transparent 40%),radial-gradient(circle at 50% 100%,#fff1b8 0,transparent 45%),linear-gradient(180deg,#fdf7ff,#eef8ff)}}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) body{background:radial-gradient(circle at 12% 8%,rgba(255,111,165,.22) 0,transparent 38%),radial-gradient(circle at 88% 18%,rgba(94,227,255,.2) 0,transparent 40%),linear-gradient(180deg,#1a1230,#0d1a2b)}}
+:root[data-theme="dark"] body{background:radial-gradient(circle at 12% 8%,rgba(255,111,165,.22) 0,transparent 38%),radial-gradient(circle at 88% 18%,rgba(94,227,255,.2) 0,transparent 40%),linear-gradient(180deg,#1a1230,#0d1a2b)}
+.say{border-radius:24px;border:2px solid #f3c6ff;background:linear-gradient(135deg,#ffffff,#f7f0ff);box-shadow:0 8px 22px rgba(142,107,255,.18);font-weight:600}
+.command-panel,details{border-radius:24px;border:2px solid #e6dcff;box-shadow:0 8px 22px rgba(142,107,255,.14)}
+summary{color:#6a4fd1}
+button{transition:transform .15s ease,box-shadow .15s ease}
+button:active{transform:scale(.95)}
+.controls button,.row button,details button,.menu-toggle{border:0;border-radius:999px;color:#fff;font-weight:800;padding:11px 18px;background:linear-gradient(135deg,#ff6fa5,#8e6bff);box-shadow:0 6px 16px rgba(142,107,255,.35)}
+.menu-toggle{width:52px;height:52px;color:#fff;border:0}
+.mode-btn{border-radius:999px;border:2px solid #d7c8ff;background:#ffffff;color:#6a4fd1;font-weight:800;box-shadow:0 3px 10px rgba(142,107,255,.18)}
+.mode-btn.active{background:linear-gradient(135deg,#ff6fa5,#8e6bff);color:#fff;border-color:transparent}
+:root[data-theme="dark"] .mode-btn{background:#1f1838;color:#d9ccff;border-color:#4a3a7a}
+:root[data-theme="dark"] .command-panel,:root[data-theme="dark"] details{background:#1a1530;border-color:#3a2f63}
+
+/* ---- Temi colore: 5 pacchetti. Ogni tema cambia sfondo, pulsanti e il tasto Parla ---- */
+:root{--btn1:#3f7fa8;--btn2:#2b5f8a;--talk1:#5f9f92;--talk2:#3a7d70;--talkfg:#ffffff;--bgpack:radial-gradient(circle at 15% 10%,#a9cde0 0,transparent 40%),radial-gradient(circle at 85% 25%,#bcdcea 0,transparent 42%),linear-gradient(180deg,#c9e2ee,#b0d0e0)}
+:root[data-pack="oceano"]{--btn1:#3f7fa8;--btn2:#2b5f8a;--talk1:#5f9f92;--talk2:#3a7d70;--talkfg:#ffffff;--bgpack:radial-gradient(circle at 15% 10%,#a9cde0 0,transparent 40%),radial-gradient(circle at 85% 25%,#bcdcea 0,transparent 42%),linear-gradient(180deg,#c9e2ee,#b0d0e0)}
+:root[data-pack="foresta"]{--btn1:#5a8f5a;--btn2:#3b6b3b;--talk1:#b8973e;--talk2:#8c6d22;--talkfg:#ffffff;--bgpack:radial-gradient(circle at 12% 12%,#b5d6a8 0,transparent 40%),linear-gradient(180deg,#d4e8c8,#bcd6aa)}
+:root[data-pack="tramonto"]{--btn1:#c0604a;--btn2:#954568;--talk1:#c4a23e;--talk2:#9a7024;--talkfg:#ffffff;--bgpack:radial-gradient(circle at 15% 10%,#e9b9a3 0,transparent 40%),linear-gradient(180deg,#eccab8,#dcb4c4)}
+:root[data-pack="notte"]{--btn1:#5d4aa8;--btn2:#465fa8;--talk1:#3f8799;--talk2:#2f6b61;--talkfg:#ffffff;--bgpack:radial-gradient(circle at 12% 8%,rgba(93,74,168,.22) 0,transparent 38%),linear-gradient(180deg,#0c0a1a,#070b14);--fg:#e8edf4;--card:#15122a;--line:#342a58;--bg:#070b14;color-scheme:dark}
+:root[data-pack] body{background:var(--bgpack)}
+.controls button,.row button,details button,.menu-toggle{background:linear-gradient(135deg,var(--btn1),var(--btn2))}
+.mode-btn.active{background:linear-gradient(135deg,var(--btn1),var(--btn2))}
+#talk{background:linear-gradient(135deg,var(--talk1),var(--talk2));color:var(--talkfg);box-shadow:0 6px 16px rgba(0,0,0,.18);font-weight:900}
+:root[data-pack="notte"] .mode-btn{background:#1f1838;color:#d9ccff;border-color:#4a3a7a}
+:root[data-pack="notte"] .command-panel,:root[data-pack="notte"] details{background:#1a1530;border-color:#3a2f63}
+:root[data-pack="notte"] .say{background:#1a1530;border-color:#3a2f63;color:#e8edf4}
 </style>
 </head>
 <body>
@@ -112,6 +151,11 @@ details .row,details label{margin-top:10px}
 <ellipse class="robot-shadow" cx="200" cy="493" rx="105" ry="17" fill="#172a3a" opacity=".28"/>
 <ellipse cx="200" cy="488" rx="120" ry="32" fill="url(#floorGlow)"/>
 <g transform="translate(0 10)">
+<!-- Mantello: primo livello, dietro al corpo -->
+<g class="cloth-layer">
+  <path class="cl cl-mantello" d="M122 190 Q200 172 278 190 L302 300 Q312 390 318 472 Q200 490 82 472 Q88 390 98 300 Z" fill="#7b4fbf" stroke="#4e2f86" stroke-width="4" stroke-linejoin="round"/>
+  <path class="cl cl-mantello" d="M82 472 Q200 490 318 472" fill="none" stroke="#ffd166" stroke-width="7" stroke-linecap="round"/>
+</g>
 <!-- Gambe -->
 <g id="leftLeg">
   <path class="metal" d="M145 347 Q132 350 132 370 L128 431 Q128 449 145 452 L170 452 Q184 449 182 432 L178 369 Q176 350 162 347Z"/>
@@ -181,6 +225,17 @@ details .row,details label{margin-top:10px}
   <circle class="joint" cx="276" cy="224" r="17"/>
   <path d="M124 224 L139 224 M276 224 L261 224" stroke="#e8f5fa" stroke-width="4" stroke-linecap="round"/>
 </g>
+<g transform="translate(0 10)"><g class="cloth-layer">
+  <path class="cl cl-sciarpa" d="M156 176 Q200 194 244 176 L248 196 Q200 216 152 196 Z" fill="#e4572e" stroke="#a83a1a" stroke-width="3"/>
+  <path class="cl cl-sciarpa" d="M222 196 L248 198 L258 276 L234 282 Z" fill="#e4572e" stroke="#a83a1a" stroke-width="3"/>
+<g class="cl cl-natale" transform="translate(200 300) scale(1.06) translate(-200 -300)">
+  <path class="cl cl-natale" d="M132 196 Q150 184 174 188 L226 188 Q250 184 268 196 Q284 236 290 290 Q294 340 270 362 Q200 380 130 362 Q106 340 110 290 Q116 236 132 196Z" fill="#d62828" stroke="#8c1717" stroke-width="3"/>
+  <path class="cl cl-natale" d="M160 186 Q200 206 240 186 L240 198 Q200 216 160 198 Z" fill="#ffffff" stroke="#c9c9c9" stroke-width="2"/>
+  <path class="cl cl-natale" d="M116 358 Q200 378 284 358 L284 372 Q200 390 116 372 Z" fill="#ffffff" stroke="#c9c9c9" stroke-width="2"/>
+  <rect class="cl cl-natale" x="112" y="300" width="176" height="14" rx="4" fill="#222"/>
+  <rect class="cl cl-natale" x="186" y="297" width="28" height="20" rx="3" fill="#ffd166" stroke="#b8901c" stroke-width="2"/>
+</g>
+</g></g>
 </svg>
 </div>
 <div class="screen-wrap">
@@ -249,13 +304,49 @@ details .row,details label{margin-top:10px}
 <div class="face-hint" id="faceHint">Doppio tocco per cambiare forma</div>
   <div id="hearts" style="position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:20"></div>
 </div>
-<svg class="headphones" viewBox="0 0 310 240" aria-hidden="true" focusable="false">
+<svg class="headphones acc-svg" viewBox="0 0 310 240" aria-hidden="true" focusable="false">
   <path d="M23 121 Q23 2 155 2 Q287 2 287 121" fill="none" stroke="url(#metalGrad)" stroke-width="24" stroke-linecap="round"/>
   <path d="M23 121 Q23 2 155 2 Q287 2 287 121" fill="none" stroke="#3e4e5b" stroke-width="2.5" stroke-linecap="round" opacity=".5"/>
   <rect x="-7" y="71" width="60" height="100" rx="26" fill="url(#metalGrad)" stroke="#3e4e5b" stroke-width="3.5"/>
   <ellipse cx="23" cy="121" rx="16" ry="32" fill="#222d37" stroke="#5d6e7b" stroke-width="2"/>
   <rect x="257" y="71" width="60" height="100" rx="26" fill="url(#metalGrad)" stroke="#3e4e5b" stroke-width="3.5"/>
   <ellipse cx="287" cy="121" rx="16" ry="32" fill="#222d37" stroke="#5d6e7b" stroke-width="2"/>
+  <rect x="13" y="60" width="20" height="13" rx="5" fill="url(#metalGrad)" stroke="#3e4e5b" stroke-width="2.5"/>
+  <path d="M23 62 Q19 30 11 16" fill="none" stroke="#9fb3c4" stroke-width="5" stroke-linecap="round"/>
+  <circle cx="10" cy="12" r="7" fill="#ffd166" stroke="#b8901c" stroke-width="2"/>
+  <rect x="277" y="60" width="20" height="13" rx="5" fill="url(#metalGrad)" stroke="#3e4e5b" stroke-width="2.5"/>
+  <path d="M287 62 Q291 30 299 16" fill="none" stroke="#9fb3c4" stroke-width="5" stroke-linecap="round"/>
+  <circle cx="300" cy="12" r="7" fill="#ffd166" stroke="#b8901c" stroke-width="2"/>
+</svg>
+<svg class="acc-svg acc-antenna" viewBox="0 0 310 240" aria-hidden="true" focusable="false">
+  <path d="M155 14 Q150 -20 162 -46" fill="none" stroke="#9fb3c4" stroke-width="5" stroke-linecap="round"/>
+  <circle cx="162" cy="-50" r="11" fill="#ff7a59" stroke="#b5482d" stroke-width="2.5"/>
+  <circle cx="159" cy="-54" r="3" fill="#ffd3c4" opacity=".8"/>
+</svg>
+
+<svg class="acc-svg acc-corona" viewBox="0 0 310 240" aria-hidden="true" focusable="false">
+  <path d="M80 44 L92 6 L122 30 L155 -8 L188 30 L218 6 L230 44 Z" fill="#ffd166" stroke="#b8901c" stroke-width="3" stroke-linejoin="round"/>
+  <rect x="80" y="40" width="150" height="12" rx="5" fill="#f2b84b" stroke="#b8901c" stroke-width="2.5"/>
+  <circle cx="92" cy="6" r="4" fill="#ff6b6b"/>
+  <circle cx="155" cy="-8" r="5" fill="#5fe3ff"/>
+  <circle cx="218" cy="6" r="4" fill="#ff6b6b"/>
+</svg>
+<svg class="acc-svg acc-fiore" viewBox="0 0 310 240" aria-hidden="true" focusable="false">
+  <g transform="translate(262 40)">
+    <circle cx="0" cy="-12" r="9" fill="#ff9ec7" stroke="#d9588f" stroke-width="2"/>
+    <circle cx="11" cy="-4" r="9" fill="#ff9ec7" stroke="#d9588f" stroke-width="2"/>
+    <circle cx="7" cy="10" r="9" fill="#ff9ec7" stroke="#d9588f" stroke-width="2"/>
+    <circle cx="-7" cy="10" r="9" fill="#ff9ec7" stroke="#d9588f" stroke-width="2"/>
+    <circle cx="-11" cy="-4" r="9" fill="#ff9ec7" stroke="#d9588f" stroke-width="2"/>
+    <circle cx="0" cy="0" r="6" fill="#ffd166"/>
+  </g>
+</svg>
+<svg class="acc-svg acc-natale-cappello" viewBox="0 0 310 240" aria-hidden="true" focusable="false">
+<g transform="translate(150 40) scale(0.7) translate(-150 -40)">
+  <path d="M52 46 Q120 40 150 6 Q190 -30 262 -42 Q236 0 252 46 Z" fill="#d62828" stroke="#8c1717" stroke-width="3" stroke-linejoin="round"/>
+  <rect x="44" y="34" width="222" height="24" rx="12" fill="#ffffff" stroke="#c9c9c9" stroke-width="2"/>
+  <circle cx="262" cy="-42" r="12" fill="#ffffff" stroke="#c9c9c9" stroke-width="2"/>
+</g>
 </svg>
 </div><!-- /screen-wrap -->
 </div><!-- /robot-stage -->
@@ -276,8 +367,9 @@ details .row,details label{margin-top:10px}
 <details>
 <summary>Personalità</summary>
 <div class="row mode-select" style="margin-top:8px" aria-hidden="true">
-  <button class="mode-btn" id="btnRobot" tabindex="-1">Robot</button>
-  <button class="mode-btn" id="btnCat" tabindex="-1">Gatto</button>
+  <button class="mode-btn" id="btnRobot" tabindex="-1">Robottino</button>
+  <button class="mode-btn" id="btnCat" tabindex="-1">Gattino</button>
+  <button class="mode-btn" id="btnMonk" tabindex="-1">Robotv1</button>
 </div>
 <div class="row" style="gap:6px;margin-top:8px">
   <button class="mode-btn" id="btnPlayful" style="flex:1;font-size:.85rem">Giocherellone</button>
@@ -288,8 +380,13 @@ details .row,details label{margin-top:10px}
 </div>
 <details id="set">
 <summary>Impostazioni</summary>
+<label style="margin-top:8px">Tema colore <select id="pack" aria-label="Tema colore" style="background:var(--card);color:var(--fg);border:1px solid var(--line);border-radius:12px;padding:10px;font:inherit"><option value="oceano">Oceano</option><option value="foresta">Foresta</option><option value="tramonto">Tramonto</option><option value="notte">Notte</option></select></label>
+<label style="margin-top:8px">Vestito <select id="cloth" aria-label="Vestito del robot" style="background:var(--card);color:var(--fg);border:1px solid var(--line);border-radius:12px;padding:10px;font:inherit"><option value="auto">Automatico</option><option value="nessuno">Nessuno</option><option value="mantello">Mantello</option><option value="sciarpa">Sciarpa</option><option value="natale">Babbo Natale</option></select></label>
+<label style="margin-top:8px">Accessorio <select id="accessory" aria-label="Accessorio del robot" style="background:var(--card);color:var(--fg);border:1px solid var(--line);border-radius:12px;padding:10px;font:inherit"><option value="cuffie">Cuffie</option><option value="antenna">Antenna</option><option value="corona">Corona</option><option value="fiore">Fiore</option><option value="nessuno">Nessuno</option></select></label>
 <label style="margin-top:8px"><input id="continuous" type="checkbox"> Ascolto continuo</label>
-<label style="margin-top:8px">Voce acuta <input id="pitch" type="range" min="1" max="2" step="0.05" value="1.8" aria-label="Acutezza della voce"></label>
+<label style="margin-top:8px">Voce <select id="preset" aria-label="Preset voce" style="background:var(--card);color:var(--fg);border:1px solid var(--line);border-radius:12px;padding:10px;font:inherit"><option value="robottino">Robottino</option><option value="dolcetta">Dolcetta</option><option value="vivace">Vivace</option><option value="calmo">Calmo</option><option value="buffo">Buffo</option><option value="personalizzata">Personalizzata</option></select></label>
+<label style="margin-top:8px">Acutezza <input id="pitch" type="range" min="0" max="2" step="0.05" value="1.8" aria-label="Acutezza della voce"></label>
+<label style="margin-top:8px">Velocità <input id="rate" type="range" min="0.6" max="1.5" step="0.05" value="1.1" aria-label="Velocità della voce"></label>
 <div class="row" style="margin-top:10px"><select id="provider" aria-label="Fornitore IA" style="flex:1;background:var(--card);color:var(--fg);border:1px solid var(--line);border-radius:12px;padding:10px;font:inherit"><option value="gemini">Gemini (Google)</option><option value="openai">ChatGPT (OpenAI)</option></select></div>
 <div class="row" style="margin-top:10px"><input id="key" type="password" placeholder="Chiave API" autocomplete="off" aria-label="Chiave API"><button id="savekey">Salva</button></div>
 <div class="row"><input id="model" type="text" value="gemini-3.5-flash-lite" aria-label="Nome del modello"></div>
@@ -330,20 +427,12 @@ details .row,details label{margin-top:10px}
 <details id="bedtimePanel">
 <summary>Buonanotte</summary>
 <div style="margin-top:10px">
-  <label style="display:block;margin-bottom:6px;color:var(--muted)">Durata del racconto</label>
-  <div class="row" style="gap:6px;flex-wrap:wrap">
-    <button class="mode-btn bed-dur" data-min="2">2 min</button>
-    <button class="mode-btn bed-dur" data-min="5">5 min</button>
-    <button class="mode-btn bed-dur" data-min="10">10 min</button>
-    <button class="mode-btn bed-dur" data-min="15">15 min</button>
-  </div>
+<label style="display:block;margin-bottom:6px;color:var(--muted)">Quale storia</label>
+<select id="storyPick" aria-label="Scegli la storia" style="width:100%;background:var(--card);color:var(--fg);border:1px solid var(--line);border-radius:12px;padding:10px;font:inherit;margin-bottom:10px"><option value="random">Casuale</option><option value="0">I tre porcellini</option><option value="1">Cappuccetto Rosso</option><option value="2">Il brutto anatroccolo</option><option value="3">La lepre e la tartaruga</option><option value="4">Il leone e il topolino</option><option value="5">Pinocchio</option><option value="6">Riccioli d'oro e i tre orsi</option><option value="7">Il gatto con gli stivali</option><option value="8">La formica e la cicala</option><option value="9">Il cane e la sua ombra</option><option value="10">Cenerentola</option><option value="11">Pollicina</option><option value="12">I vestiti nuovi dell'imperatore</option><option value="13">La principessa sul pisello</option><option value="14">Rapunzel</option><option value="15">Jack e il fagiolo magico</option><option value="16">La volpe e la cicogna</option><option value="17">La gallina dalle uova d'oro</option><option value="18">Il pesciolino d'oro</option><option value="19">La bella addormentata</option><option value="gemini">Storia nuova (Gemini)</option></select>
   <div class="row" style="margin-top:10px;gap:8px">
     <button id="btnStoryAuto" class="mode-btn" style="flex:1">Racconto libero</button>
     <button id="btnStoryInteractive" class="mode-btn" style="flex:1">Racconto interattivo</button>
   </div>
-  <label style="margin-top:12px;display:flex;align-items:center;gap:8px">
-    <input id="softVoice" type="checkbox" checked> Voce dolce e lenta
-  </label>
   <label style="margin-top:8px;display:flex;align-items:center;gap:8px">
     <input id="ambientSound" type="checkbox"> Suono rilassante (pioggia)
   </label>
@@ -402,12 +491,12 @@ $('savekey').addEventListener('click',()=>{ const p=PROVIDERS[currentProvider()]
 $('provider').addEventListener('change',()=>{ store.set('provider',$('provider').value); loadProviderUI(); sayEl.textContent='Ora uso ' + PROVIDERS[currentProvider()].label + '.'; });
 if(!currentKey()){openCommandPanel();$('set').open=true;}
 
-let mode = 'robot'; // modalità gatto rinviata: in questa fase resta attivo il robottino
-store.set('faceMode', 'robot');
+let mode = ['cat','monk'].includes(store.get('faceMode')) ? store.get('faceMode') : 'robot'; // personaggio scelto, ricordato nel browser
 const robotFace = $('robotFace');
 const catFace = $('catFace');
 const btnRobot = $('btnRobot');
 const btnCat = $('btnCat');
+const btnMonk = $('btnMonk');
 
 function applyMode(m, animate=true){
   mode = m;
@@ -423,11 +512,13 @@ function applyMode(m, animate=true){
       catFace.style.pointerEvents = 'none';
     }
   }else{
-    robotFace.style.opacity = mode==='robot' ? '1' : '0';
+    robotFace.style.opacity = mode!=='cat' ? '1' : '0';
     catFace.style.opacity = mode==='cat' ? '1' : '0';
     catFace.style.pointerEvents = mode==='cat' ? 'auto' : 'none';
   }
   btnRobot.classList.toggle('active', mode==='robot');
+  btnMonk.classList.toggle('active', mode==='monk');
+  robotStage.classList.toggle('theme-monk', mode==='monk');
   btnCat.classList.toggle('active', mode==='cat');
   $('faceHint').textContent = 'Accarezzami per interagire';
 }
@@ -435,6 +526,7 @@ applyMode(mode, false);
 
 btnRobot.addEventListener('click', ()=>applyMode('robot'));
 btnCat.addEventListener('click', ()=>applyMode('cat'));
+btnMonk.addEventListener('click', ()=>applyMode('monk'));
 
 /* ---------- FASE 3: Personalità ---------- */
 const PERSONALITIES = {
@@ -511,6 +603,23 @@ btnCurious.addEventListener('click', ()=>applyPersonality('curious'));
 // Applica personalità salvata all’avvio (senza annunciare)
 applyPersonality(personality, false);
 
+/* Ritmo di attesa: ogni personalità ha un proprio ritmo; di notte il robot sta zitto */
+const IDLE_RANGE = {playful:[25,45], curious:[40,70], cuddly:[60,120]};
+function isNight(){ const h = new Date().getHours(); return h >= 21 || h < 7; }
+function scheduleIdle(){
+  const r = IDLE_RANGE[personality] || [60,120];
+  const ms = (r[0] + Math.random() * (r[1] - r[0])) * 1000;
+  setTimeout(()=>{
+    if(!speaking && !storyRunning && !isNight()){
+      const p = PERSONALITIES[personality];
+      const hint = p.idleHints[Math.floor(Math.random() * p.idleHints.length)];
+      say(hint, p.defaultMood);
+    }
+    scheduleIdle();
+  }, ms);
+}
+scheduleIdle();
+
 /* ---------- FASE 5: Memoria locale ---------- */
 const MEM_KEY = 'robottino_memories';
 const NAME_KEY = 'robottino_name';
@@ -542,7 +651,7 @@ function showGameUI(show){
 
 btnStopGame.addEventListener('click', ()=>{
   showGameUI(false);
-  mood = 'idle';
+  mood = baseMood();
   say('Ok, abbiamo finito di giocare!', 'happy');
 });
 
@@ -741,7 +850,30 @@ let storyPaused = false;
 let storyTimer = null;
 let storyEndTime = 0;
 let ambientNode = null;
-let softVoiceOn = true;
+/* Preset voce: il preset Dolcetta è la versione dolce e lenta */
+const VOICE_PRESETS = {
+  robottino:{pitch:1.8, rate:1.1},
+  dolcetta:{pitch:1.5, rate:0.85},
+  vivace:{pitch:2.0, rate:1.25},
+  calmo:{pitch:1.0, rate:0.95},
+  buffo:{pitch:1.8, rate:1.0, jitter:0.3}
+};
+let voiceCfg = {preset:'robottino', pitch:1.8, rate:1.1};
+function loadVoiceCfg(){
+  try{ const raw = store.get('voice'); if(raw) voiceCfg = Object.assign(voiceCfg, JSON.parse(raw)); }catch(_){}
+}
+function saveVoiceCfg(){ store.set('voice', JSON.stringify(voiceCfg)); }
+function isSoft(){ return voiceCfg.preset === 'dolcetta'; }
+function voiceParams(){
+  const j = (VOICE_PRESETS[voiceCfg.preset] || {}).jitter || 0;
+  const p = Math.min(2, Math.max(0, voiceCfg.pitch + (Math.random()*2 - 1) * j));
+  return {pitch:p, rate:voiceCfg.rate};
+}
+function applyVoiceUI(){
+  $('preset').value = voiceCfg.preset;
+  $('pitch').value = voiceCfg.pitch;
+  $('rate').value = voiceCfg.rate;
+}
 let chosenDuration = 5; // minuti
 
 function loadStories(){
@@ -749,19 +881,36 @@ function loadStories(){
 }
 function saveStories(list){ store.set(STORY_KEY, JSON.stringify(list.slice(0,30))); }
 
-// Durata buttons
-document.querySelectorAll('.bed-dur').forEach(btn=>{
-  btn.addEventListener('click', ()=>{
-    document.querySelectorAll('.bed-dur').forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active');
-    chosenDuration = +btn.dataset.min;
-  });
-});
-// default 5 min
 document.querySelector('.bed-dur[data-min="5"]')?.classList.add('active');
 
-$('softVoice').addEventListener('change', ()=>{ softVoiceOn = $('softVoice').checked; });
-softVoiceOn = $('softVoice').checked;
+$('preset').addEventListener('change', ()=>{
+  const v = $('preset').value;
+  if(VOICE_PRESETS[v]){ voiceCfg = {preset:v, pitch:VOICE_PRESETS[v].pitch, rate:VOICE_PRESETS[v].rate}; }
+  else { voiceCfg.preset = 'personalizzata'; }
+  applyVoiceUI(); saveVoiceCfg();
+});
+$('pitch').addEventListener('input', ()=>{ voiceCfg.preset='personalizzata'; voiceCfg.pitch=parseFloat($('pitch').value); applyVoiceUI(); saveVoiceCfg(); });
+$('rate').addEventListener('input', ()=>{ voiceCfg.preset='personalizzata'; voiceCfg.rate=parseFloat($('rate').value); applyVoiceUI(); saveVoiceCfg(); });
+loadVoiceCfg(); applyVoiceUI();
+/* Tema colore: oceano, foresta, tramonto o notte */
+const PACKS = ['oceano','foresta','tramonto','notte'];
+function applyPack(p){ if(!PACKS.includes(p)) p = 'oceano'; document.documentElement.dataset.pack = p; $('pack').value = p; }
+$('pack').addEventListener('change', ()=>{ store.set('pack', $('pack').value); applyPack($('pack').value); });
+applyPack(store.get('pack') || 'oceano');
+/* Accessorio del robot: cuffie, antenna, corona, fiore o nessuno */
+const ACCESSORI = ['cuffie','antenna','corona','fiore','nessuno'];
+const CLOTH_FOR_ACC = {corona:'mantello', fiore:'sciarpa', antenna:'sciarpa', cuffie:'sciarpa', nessuno:'nessuno'};
+function applyCloth(){
+  const pref = store.get('cloth') || 'auto';
+  const acc = robotStage.dataset.acc || 'cuffie';
+  const eff = pref === 'auto' ? (CLOTH_FOR_ACC[acc] || 'nessuno') : pref;
+  robotStage.dataset.cloth = eff;
+  $('cloth').value = pref;
+}
+function applyAccessory(v){ if(!ACCESSORI.includes(v)) v = 'cuffie'; robotStage.dataset.acc = v; $('accessory').value = v; applyCloth(); }
+$('cloth').addEventListener('change', ()=>{ store.set('cloth', $('cloth').value); applyCloth(); });
+$('accessory').addEventListener('change', ()=>{ store.set('accessory', $('accessory').value); applyAccessory($('accessory').value); });
+applyAccessory(store.get('accessory') || 'cuffie');
 
 function startAmbient(){
   stopAmbient();
@@ -803,20 +952,46 @@ function storySay(text, moodName){
     const u = new SpeechSynthesisUtterance(text);
     u.lang = 'it-IT';
     if(voices[0]) u.voice = voices[0];
-    if(softVoiceOn){
-      u.pitch = 1.15;
-      u.rate = 0.82;          // più lento e dolce
-    }else{
-      u.pitch = parseFloat($('pitch').value) || 1.8;
-      u.rate = 1.05;
-    }
+    const vp = voiceParams();
+    u.pitch = vp.pitch;
+    u.rate = vp.rate;
     u.onstart = ()=>{ speaking = true; mood = moodName || 'sleepy'; };
     u.onend = u.onerror = ()=>{ speaking = false; resolve(); };
     speechSynthesis.speak(u);
   });
 }
 
+// Fiabe famose di pubblico dominio, riscritte con parole nuove (funzionano anche offline)
+const FAMOUS_STORIES = [
+      `C'erano una volta tre porcellini che decisero di costruirsi ciascuno una casa. Il primo porcellino fece la sua casa di paglia, in fretta e senza pensarci troppo. Il secondo la fece di legno, un po' più robusta. Il terzo porcellino lavorò con pazienza e costruì la sua casa di mattoni, uno dopo l'altro. Un giorno arrivò il lupo, che soffiò forte davanti alla casa di paglia, e la paglia volò via. Il primo porcellino corse dal fratello. Il lupo soffiò di nuovo e la casa di legno tremò e cadde. Allora i due porcellini corsero a rifugiarsi nella casa di mattoni. Il lupo soffiò e soffiò, ma i mattoni non si mossero di un millimetro. Il lupo provò a entrare dal camino, ma il terzo porcellino aveva acceso il fuoco e l'acqua nella pentola bolliva. Il lupo scappò via e non si fece vedere mai più. I tre porcellini vissero felici e contenti nella casa di mattoni. Buonanotte, porcellini.`,
+      `C'era una volta una bambina che tutti chiamavano Cappuccetto Rosso, perché portava sempre un mantellino rosso. Un giorno la mamma le chiese di portare un cestino di dolcetti alla nonna, che abitava dall'altra parte del bosco. Cappuccetto Rosso promise di stare attenta e partì. Nel bosco incontrò un lupo, che le chiese dove stesse andando. Lei gli rispose con sincerità, e il lupo corse per primo alla casa della nonna. Quando Cappuccetto Rosso arrivò, qualcosa le sembrò strano, ma in quel momento passò lì vicino un cacciatore gentile, che capì subito che c'era un problema e la aiutò. Tutto finì bene: la nonna e la nipotina mangiarono i dolcetti insieme, e Cappuccetto Rosso imparò che ascoltare la mamma e chiedere aiuto è sempre una buona idea. Buonanotte, Cappuccetto Rosso.`,
+      `In una fattoria viveva una mamma anatra che covava le sue uova. Una alla volta si schiusero piccoli anatroccoli gialli e soffici, ma l'ultimo uovo era più grande, e quando si aprì uscì un anatroccolo grigio e goffo. Tutti lo prendevano in giro, e il piccolo si sentiva molto triste. Scappò lontano e passò l'inverno da solo, nascosto tra le canne del lago. Un giorno, in primavera, vide tre bellissimi cigni bianchi che nuotavano sull'acqua. Si avvicinò un po' timido, guardò il suo riflesso e non vide più un anatroccolo goffo: era un cigno anche lui! Gli altri cigni lo accolsero con gioia, e lui imparò che ognuno cresce con i suoi tempi. Buonanotte, piccolo cigno.`,
+      `Una lepre si vantava sempre di essere la più veloce del bosco. Un giorno una tartaruga, stanca di sentirla parlare, disse: facciamo una gara! La lepre rise forte, ma accettò. La gara partì, e la lepre corse così veloce che a metà strada decise di fare un sonnellino, sicura di vincere comunque. La tartaruga, lenta ma costante, non si fermò mai. Quando la lepre si svegliò, la tartaruga stava già tagliando il traguardo. La lepre capì che la costanza vale più della fretta. Buonanotte, e ricordati: piano piano si va lontano.`,
+      `Un giorno un grande leone dormiva sotto un albero, quando un topolino gli passò sopra il naso e lo svegliò. Il leone, arrabbiato, lo afferrò per la coda. Il topolino lo pregò: lasciami andare, e un giorno ti ripagherò. Il leone rise e lo lasciò andare. Qualche tempo dopo il leone rimase impigliato nella rete dei cacciatori. Ruggì così forte che il topolino lo sentì da lontano, corse e con i suoi dentini rosicchiò le corde, liberandolo. Il leone capì che anche i piccoli possono aiutare i grandi, e da allora furono grandi amici. Buonanotte.`,
+      `C'era una volta un falegname di nome Geppetto, che un giorno intagliò nel legno un burattino. Il burattino, chiamato Pinocchio, prese vita. Era curioso e birichino: non ascoltava i consigli, si cacciava nei guai e diceva bugie che gli facevano crescere il naso. Un giorno, sbagliando strada, fu inghiottito da un grande pesce, ma lì dentro ritrovò Geppetto. Insieme trovarono la via di casa. Pinocchio capì che essere sinceri e impegnarsi rende davvero un bambino vero. Diventò bravo e buono, e un giorno si trasformò finalmente in un bambino in carne e ossa. Buonanotte, Pinocchio.`,
+      `Una mattina, nel bosco, una bambina dai capelli biondi e ricci uscì a fare una passeggiata. Si chiamava Riccioli d'oro, e aveva un gran naso per le cose buone. Arrivò davanti a una casetta di legno con la porta socchiusa, così entrò piano piano. In cucina c'erano tre ciotole fumanti sul tavolo: una grande, una media e una piccola. Riccioli d'oro assaggiò la zuppa della ciotola grande, ma era troppo calda. Assaggiò quella media, ma era troppo fredda. Infine assaggiò quella piccola, e stava proprio bene! Poi provò le tre sedie: la grande era troppo alta, la media troppo dura, e la piccola si ruppe sotto il suo peso, e lei rise. Stanca, salì al piano di sopra e trovò tre letti: uno troppo duro, uno troppo morbido, e uno piccolo, morbido e caldo. Si addormentò subito. Proprio in quel momento tornarono i tre orsi che vivevano lì: papà orso, mamma orsa e il piccolo orsetto. Scoprirono le ciotole mangiate e le sedie rotte, e si chiesero chi fosse stato. Quando videro Riccioli d'oro addormentata nel letto piccolo, l'orsetto le sorrise. Lei si svegliò, si scusò con tanta vergogna e promise di non entrare più in casa d'altri senza permesso. Gli orsi la perdonarono, e insieme fecero colazione in pace. Buonanotte, Riccioli d'oro.`,
+      `C'era una volta un mugnaio che, prima di morire, lasciò ai suoi tre figli quello che possedeva: al primo il mulino, al secondo l'asino, e al più piccolo soltanto un gatto. Il ragazzo era triste, ma il gatto gli disse: dammi un paio di stivali e un sacco, e vedrai che ti farò ricco. Il giovane non ci credeva, ma gli procurò gli stivali. Il gatto andò nel bosco, prese conigli e pernici, e li portò in dono al re, dicendo che venivano dal suo padrone, il Marchese di Carabas. Il re fu contento, e più volte il gatto gli portò regali. Un giorno il gatto seppe che il re sarebbe passato lungo il fiume con la figlia. Convinse il ragazzo a fare un bagno nell'acqua fresca, e quando il carro del re passò, il gatto gridò che il Marchese era stato derubato. Il re fece portare al giovane abiti belli e lo invitò in carrozza con la principessa. Nel frattempo il gatto corse avanti e disse ai contadini che, se avessero detto al re che quelle terre appartenevano al Marchese, sarebbero stati ricompensati. Così fu. Infine il gatto arrivò al castello di un vecchio orco. Lo sfidò a dimostrare che sapeva trasformarsi in animali, e l'orco si trasformò in un topolino. Il gatto, veloce, lo fece scappare via, e il castello divenne del Marchese. Il re, colpito dalla bontà del giovane e dall'astuzia del gatto, diede la figlia in sposa al Marchese. E il gatto, con i suoi stivali, andò felice a fare le fusa. Buonanotte, gatto con gli stivali.`,
+      `D'estate una cicala cantava allegra tutto il giorno, mentre una formica lavorava sodo per raccogliere chicchi di grano e portarli nella sua tana. La cicala la prendeva in giro: perché sprecare il sole lavorando? La formica le rispondeva con pazienza: bisogna pensare anche al futuro, perché l'inverno arriva sempre. Passò l'estate, e arrivò il freddo, con la neve che copriva i prati. La cicala, senza cibo e con le ali infreddolite, bussò alla porta della formica chiedendo aiuto. La formica l'accolse con calore, la fece sedere vicino al fuoco e le offrì una zuppa calda e del pane. Poi le disse: il tuo canto è bellissimo, e quest'inverno potrai cantare per noi, mentre io ti preparerò da mangiare. Da allora la cicala imparò che il lavoro e la gentilezza stanno bene insieme. Buonanotte, cicala e formica.`,
+      `Un cane, che aveva trovato un bel pezzo di carne, attraversava un ponte di legno sopra un ruscello limpido. Guardando giù, vide il suo riflesso nell'acqua: e nell'acqua c'era un altro cane, con un pezzo di carne ancora più grande! Il cane, ingordo, abbaiò per prendere anche quello. Ma quando aprì la bocca, la sua carne cadde nell'acqua e sparì. Il riflesso era solo un'illusione, e il cane rimase senza niente. Si sedette sul ponte, un po' triste e un po' pentito. Poi si alzò, scosse la testa, e capì una cosa importante: chi vuole tutto rischia di perdere anche quello che ha già. Da quel giorno il cane imparò a essere contento di ciò che possedeva. Buonanotte, cagnolino.`,
+      `C'era una volta una ragazza di nome Cenerentola, che viveva con la matrigna e le due sorellastre. Dopo la morte del padre lavorava dalla mattina alla sera, sempre in mezzo alla cenere del camino, e per questo la chiamavano Cenerentola. Un giorno al castello fu annunciato un grande ballo, e le sorellastre si prepararono con cura, lasciandola a casa con mille faccende. Cenerentola, triste, si mise a piangere sotto il melo del giardino. Apparve allora una fata gentile, che con la bacchetta trasformò una zucca in carrozza, i topolini in cavalli e il vecchio vestito in un abito di seta. Le raccomandò di tornare prima di mezzanotte. Al ballo il principe la vide e danzò con lei tutta la sera. Allo scoccare della mezzanotte Cenerentola scappò via così in fretta che perse una scarpetta di cristallo. Il principe la cercò per tutto il regno, e quando arrivò a casa sua la scarpetta entrò perfettamente nel suo piede. Si sposarono e vissero felici e contenti. Buonanotte, Cenerentola.`,
+  `Una donna desiderava tanto avere un bambino, e una fata le regalò un chicco d'orzo. Dal chicco nacque una bambina minuscola, grande quanto un pollice, e la chiamarono Pollicina. Dormiva in un guscio di noce, usando una foglia di rosa come materasso. Una notte una rospa la rapì per farla sposare al suo brutto figlio, ma i pesciolini del fiume, con l'aiuto di una farfalla, la salvarono. Pollicina passò l'estate nei campi, dove si fece amica di un uccellino. Un giorno, tra i fiori, incontrò un piccolo principe alato, bello e gentile, che le propose di volare con lui nel regno dei fiori. Pollicina accettò, e la sua vita si riempì di profumi e di canzoni. Buonanotte, Pollicina.`,
+  `C'era una volta un imperatore che amava i vestiti nuovi più di ogni altra cosa. Un giorno arrivarono due furbi tessitori, che dissero di saper tessere una stoffa meravigliosa: era così sottile che diventava invisibile agli sciocchi e a chi non era adatto al suo posto. L'imperatore ordinò subito un abito così. I tessitori finsero di lavorare a un telaio vuoto, e chiesero molto oro. Quando l'abito fu pronto, l'imperatore finse di indossarlo, e tutti i cortigiani lo lodavano, per non sembrare sciocchi. Così l'imperatore sfilò per la città, quasi nudo. Nessuno osava dire la verità, finché un bambino esclamò: ma l'imperatore non ha niente addosso! Allora la folla cominciò a ridere, e anche l'imperatore capì di essere stato ingannato. Da quel giorno imparò ad ascoltare anche la voce sincera dei bambini. Buonanotte.`,
+  `C'era una volta un principe che voleva sposare una vera principessa. Ne cercò tante, ma nessuna sembrava quella giusta. Una sera, durante un temporale terribile, bussò al castello una ragazza tutta bagnata, che disse di essere una principessa. La regina decise di mettere alla prova la sua fama: sotto i materassi del letto degli ospiti mise un piccolo pisello. Al mattino la ragazza si lamentò tutta la notte: non aveva dormito, perché sentiva qualcosa di duro sotto la schiena, e aveva i lividi! Solo una vera principessa poteva sentire così bene un pisello sotto venti materassi. Il principe capì di aver trovato la sua sposa. Buonanotte, principessa.`,
+  `C'era una volta una coppia che aspettava un bambino, e la donna desiderava tanto un po' di insalata del giardino di una strega vicina. Il marito la portò via di nascosto, e la strega li scoprì. In cambio prese la loro bambina, che chiamò Rapunzel, e la chiuse in una torre senza porte. Rapunzel crebbe con lunghi capelli dorati e cantava tutto il giorno. Un giorno un principe passò vicino alla torre, sentì la sua voce e se ne innamorò. Scoprì che per salire doveva arrampicarsi sui capelli di lei. Ogni giorno la visitava, e i due diventarono amici. Quando la strega scoprì tutto, li separò, ma il principe, dopo un lungo viaggio, ritrovò Rapunzel nel deserto e la riabbracciò. Vissero insieme felici. Buonanotte, Rapunzel.`,
+  `C'era una volta un ragazzo di nome Jack, che viveva con la mamma in una casetta di campagna. Erano poveri, e un giorno la mamma gli chiese di vendere al mercato la vecchia mucca. Lungo la strada Jack incontrò un uomo che gli offrì cinque fagioli magici in cambio. Jack accettò, ma la mamma, arrabbiata, buttò i fagioli dalla finestra. La mattina dopo, al posto del seme, era spuntata una pianta altissima, che arrivava fino alle nuvole. Jack si arrampicò, e in cima trovò un castello dove viveva un gigante. Jack entrò di nascosto, prese una borsa piena di monete d'oro e una gallina che faceva uova d'oro. Scese in fretta dalla pianta, e quando il gigante lo inseguì, Jack tagliò la pianta, che si piegò dolcemente a terra. La mamma e Jack vissero felici, con la gallina che ogni mattina faceva un uovo. Buonanotte, Jack.`,
+  `Una volpe e una cicogna erano vicine di casa e decisero di diventare amiche. Un giorno la volpe invitò la cicogna a cena e le servì una zuppa in un piatto largo e basso, così che il lungo becco della cicogna non potesse arrivarci. La cicogna non si arrabbiò. Qualche giorno dopo ricambiò l'invito, e servì la cena in un vaso alto e stretto, dove solo lei poteva infilare il becco. La volpe capì la lezione: chi fa uno scherzo può riceverne uno uguale. Così le due amiche risero insieme, e da allora si trattarono con gentilezza. Buonanotte, volpe e cicogna.`,
+  `Un contadino aveva una gallina che ogni giorno deponeva un uovo d'oro. Diventò ricco, ma poco a poco volle di più. Pensò: se la gallina fa un uovo d'oro al giorno, dentro ce ne saranno tanti tutti insieme! Così decise di cercare l'oro dentro la gallina, ma la gallina era una gallina comune, e l'oro non c'era. Il contadino rimase senza più uova, e capì che chi vuole tutto in fretta rischia di perdere anche quello che ha già. Da allora imparò ad avere pazienza e a dire grazie per ciò che riceve ogni giorno. Buonanotte.`,
+  `C'era una volta un pescatore povero, che viveva con la moglie in una capanna vicino al mare. Un giorno pescò un pesciolino d'oro, che gli disse: lasciami libero e ti concederò un desiderio. Il pescatore, buono, lo rimise in acqua senza chiedere nulla. Tornato a casa, raccontò tutto alla moglie, che lo rimproverò: chiedigli una casa nuova! Il pescatore tornò al mare, e il pesciolino gli concesse la casa. Ma la moglie ne volle sempre di più: un castello, poi diventare regina, poi imperatrice. Ogni volta il pescatore tornava dal pesciolino, finché il mare si fece agitato e scuro. Alla fine la moglie tornò nella vecchia capanna, più povera di prima. Il pescatore capì che la gratitudine vale più di ogni ricchezza. Buonanotte.`,
+  `Un re e una regina ebbero una figlia tanto bella, e per festeggiarla invitarono tutte le fate del regno. Ma ne dimenticarono una, che si offese e lanciò una profezia: la principessa si sarebbe punta con un fuso e avrebbe dormito per cento anni. Una delle fate buone addolcì la magia: la principessa non si sarebbe spenta, ma avrebbe solo dormito. Il re fece bruciare tutti i fusi del regno, ma la principessa, cresciuta, trovò in una torre una vecchia che filava, e si punse. Cadde in un sonno profondo, e con lei si addormentò tutto il castello. Intorno crebbero rose fitte come una siepe. Passarono cento anni, finché arrivò un giovane principe, che attraversò le rose e trovò la principessa. La svegliò con un bacio gentile, e tutto il castello si risvegliò. Si sposarono e vissero felici. Buonanotte, bella addormentata.`,
+];
+
 async function generateStory(interactive){
+  // Scelta dal menu: una fiaba precisa, una a caso, oppure una storia nuova di Gemini
+  const pick = $('storyPick') ? $('storyPick').value : 'random';
+  if(pick !== 'gemini'){
+    const idx = pick === 'random' ? Math.floor(Math.random() * FAMOUS_STORIES.length) : Math.min(FAMOUS_STORIES.length - 1, Math.max(0, +pick));
+    return FAMOUS_STORIES[idx];
+  }
   const key = currentKey();
   const minutes = chosenDuration;
   const botName = loadBotName();
@@ -826,7 +1001,7 @@ async function generateStory(interactive){
   if(interactive){
     prompt = `Inventa l'inizio di una dolce storia della buonanotte per bambini (in italiano), lunga circa 2-3 frasi. Includi un piccolo momento di scelta alla fine (es. "Vuoi che il protagonista vada nel bosco o verso il fiume?"). Tono calmo e rassicurante. Non usare tag emozionali.`;
   }else{
-    prompt = `Inventa una dolce storia della buonanotte originale in italiano, adatta a bambini, tono calmo e rassicurante. Durata indicativa adatta a circa ${minutes} minuti se raccontata lentamente (circa ${minutes*90} parole). Inizia subito con la storia, senza titoli o premesse. Non usare tag emozionali.`;
+    prompt = `Inventa una dolce storia della buonanotte originale in italiano, adatta a bambini, tono calmo e rassicurante. Lunghezza media, né troppo breve né troppo lunga (circa 200-250 parole). Inizia subito con la storia, senza titoli o premesse. Non usare tag emozionali.`;
   }
   prompt += ' ' + ageRules();
 
@@ -855,7 +1030,8 @@ async function generateStory(interactive){
       `Sul fondo del mare viveva una conchiglia che collezionava sogni. Ogni notte li portava in superficie e li lasciava galleggiare verso le case dei bambini, così che potessero sognare avventure serene e risvegliarsi felici.`
     ];
     // Scegli le storie in base alla fascia d'età impostata (se c'è)
-    const pool = FALLBACK_STORIES[currentAge()] || DEFAULT_STORIES;
+    // Scegli tra le fiabe famose e le storie di riserva per fascia d'età
+    const pool = FAMOUS_STORIES.concat(FALLBACK_STORIES[currentAge()] || DEFAULT_STORIES);
     return pool[Math.floor(Math.random()*pool.length)];
   }
 
@@ -863,7 +1039,7 @@ async function generateStory(interactive){
     const model = currentModelName();
     const r = await callAI(model, key, {
       contents:[{role:'user', parts:[{text:prompt}]}],
-      generationConfig:{maxOutputTokens: minutes > 5 ? 1200 : 700}
+      generationConfig:{maxOutputTokens: 1200}
     });
     if(!r.ok) throw new Error('api');
     const j = await r.json();
@@ -907,8 +1083,8 @@ async function runStory(interactive){
 
   // Spezza in frasi per raccontare piano
   const sentences = storyText.replace(/\n+/g,'. ').split(/(?<=[.!?…])\s+/).filter(s=>s.trim().length>3);
-  storyEndTime = Date.now() + chosenDuration * 60 * 1000;
-  $('storyStatus').textContent = `Racconto in corso (${chosenDuration} min)…`;
+  storyEndTime = Infinity; // nessun limite di tempo: la storia finisce con le sue frasi
+  $('storyStatus').textContent = 'Racconto in corso…';
 
   let i = 0;
   async function nextSentence(){
@@ -926,11 +1102,13 @@ async function runStory(interactive){
     }
     // varia un po' l'espressione
     const moods = ['sleepy','affection','happy','curious','sleepy'];
-    await storySay(sentences[i], moods[i % moods.length]);
+    // ogni frase resta visibile almeno un po', anche se la voce finisce subito
+    const minMs = Math.max(2500, sentences[i].length * 70);
+    await Promise.all([storySay(sentences[i], moods[i % moods.length]), new Promise(r=>setTimeout(r, minMs))]);
     i++;
     // piccola pausa tra le frasi
     if(storyRunning && !storyPaused){
-      setTimeout(nextSentence, softVoiceOn ? 600 : 350);
+      setTimeout(nextSentence, isSoft() ? 600 : 350);
     }
   }
   nextSentence();
@@ -947,7 +1125,7 @@ $('btnStopStory').addEventListener('click', ()=>{
   stopAmbient();
   $('btnStopStory').style.display = 'none';
   $('storyStatus').textContent = 'Racconto interrotto.';
-  mood = 'idle';
+  mood = baseMood();
   say('Va bene, interrompiamo qui. Sogni d\'oro.', 'affection');
 });
 
@@ -1082,7 +1260,7 @@ function proposeMemory(text){
   $('memNo').onclick = ()=>{
     pendingMemory = null;
     sayEl.textContent = 'Va bene, non lo salvo.';
-    setTimeout(()=>{ if(!speaking) mood='idle'; }, 1200);
+    setTimeout(()=>{ if(!speaking) mood = baseMood(); }, 1200);
   };
 }
 
@@ -1146,7 +1324,32 @@ let isPetting = false;
 
 const faceArea = $('faceArea');
 const bodySlot = $('bodySlot');
-bodySlot.addEventListener('click',()=>{ if(!speaking){ robotGesture('wave',1400); mood='happy'; setTimeout(()=>{if(!speaking)mood='idle';},1000); } });
+bodySlot.addEventListener('click',()=>{ if(!speaking){ robotGesture('wave',1400); mood='happy'; setTimeout(()=>{if(!speaking)mood = baseMood();},1000); } });
+
+/* Stelline per lo scossone: salgono dal robot e ruotano */
+function spawnStars(n=5){
+  const box = $('hearts');
+  if(!box) return;
+  box.style.zIndex = '20';
+  const glyphs = ['⭐','✨','🌟'];
+  for(let i=0;i<n;i++){
+    const st = document.createElement('div');
+    st.textContent = glyphs[Math.floor(Math.random()*glyphs.length)];
+    const size = 20 + Math.random()*16;
+    const left = 20 + Math.random()*60;
+    st.style.cssText = `position:absolute;font-size:${size}px;left:${left}%;
+      top:38%;opacity:1;transform:translateY(0) rotate(0deg) scale(0.5);
+      transition:transform 1.2s cubic-bezier(.2,.7,.3,1),opacity 1.2s ease;
+      pointer-events:none;`;
+    box.appendChild(st);
+    st.offsetHeight;
+    requestAnimationFrame(()=>{
+      st.style.transform = `translate(${(Math.random()-0.5)*150}px,${-20-Math.random()*50}px) rotate(${(Math.random()-0.5)*180}deg) scale(1.2)`;
+      st.style.opacity = '0';
+    });
+    setTimeout(()=>st.remove(),1300);
+  }
+}
 
 function spawnHearts(n=3){
   const box = $('hearts');
@@ -1160,7 +1363,7 @@ function spawnHearts(n=3){
     h.style.cssText = `position:absolute;font-size:${size}px;left:${left}%;
       top:60%;opacity:1;transform:translateY(0) scale(0.6);
       transition:transform 1.4s cubic-bezier(.2,.7,.3,1),opacity 1.4s ease;
-      pointer-events:none;filter:drop-shadow(0 2px 4px rgba(0,0,0,.4));`;
+      pointer-events:none;`;
     box.appendChild(h);
     // forza il reflow poi anima
     h.offsetHeight;
@@ -1229,7 +1432,7 @@ function doPet(){
   clearTimeout(doPet.timer);
   doPet.timer = setTimeout(()=>{
     isPetting = false;
-    if(!speaking && (mood==='affection' || mood==='laugh' || mood==='curious')) mood='idle';
+    if(!speaking && (mood==='affection' || mood==='laugh' || mood==='curious')) mood = baseMood();
   }, 1600);
 }
 
@@ -1241,7 +1444,7 @@ function doHeadPat(){
   sayEl.textContent = personality==='cuddly' ? 'Che dolce…' :
                       personality==='curious' ? 'Oh! Una carezza in testa… interessante!' :
                       'Yuppiii!';
-  setTimeout(()=>{ if(!speaking) mood='idle'; }, 1400);
+  setTimeout(()=>{ if(!speaking) mood = baseMood(); }, 1400);
 }
 
 function doTickle(){
@@ -1257,7 +1460,7 @@ function doTickle(){
   faceArea.style.transform = 'rotate(2deg)';
   setTimeout(()=>faceArea.style.transform = 'rotate(-2deg)',80);
   setTimeout(()=>faceArea.style.transform = '',180);
-  setTimeout(()=>{ if(!speaking && mood==='laugh') mood='idle'; }, 1600);
+  setTimeout(()=>{ if(!speaking && mood==='laugh') mood = baseMood(); }, 1600);
 }
 
 function doAnnoy(){
@@ -1272,7 +1475,7 @@ function doAnnoy(){
   playSound('annoy');
   const phrases = p.annoyPhrases;
   sayEl.textContent = phrases[Math.min(annoyCount-1, phrases.length-1)];
-  setTimeout(()=>{ if(!speaking && mood==='angry') mood='idle'; }, 1800);
+  setTimeout(()=>{ if(!speaking && mood==='angry') mood = baseMood(); }, 1800);
 }
 
 faceArea.addEventListener('pointerdown', e=>{
@@ -1285,8 +1488,6 @@ faceArea.addEventListener('pointerdown', e=>{
   touchStartY = y;
   touchStartTime = now;
 
-  // La modalità gatto è stata rinviata: il doppio tocco non cambia personaggio.
-  if(now - lastTap < 380){ lastTap = 0; return; }
   lastTap = now;
 });
 
@@ -1372,6 +1573,7 @@ const M = {
 let gt={x:0,y:0}, nextGaze=0, nextBlink=1500, blinkT=-1;
 const lerp=(a,b,k)=>a+(b-a)*k;
 
+let lastDrawSig="";
 function frame(t){
   const m = M[mood] || M.idle;
   if(robotStage && robotStage.dataset.mood !== mood) robotStage.dataset.mood = mood;
@@ -1402,7 +1604,8 @@ function frame(t){
   const target = speaking ? (.25 + .75 * Math.abs(Math.sin(t/105 + Math.sin(t/230)*2))) : 0;
   cur.o = lerp(cur.o, target, .35);
 
-  draw();
+  const sig=[mode,cur.h,cur.gx,cur.gy,cur.blink,cur.o,cur.smile,cur.lid,cur.ear,cur.cheek].map(v=>typeof v==="number"?v.toFixed(2):v).join("|");
+  if(sig!==lastDrawSig){ lastDrawSig=sig; draw(); }
   requestAnimationFrame(frame);
 }
 
@@ -1441,7 +1644,7 @@ function eye(prefix, s, cx, dir){
 }
 
 function draw(){
-  if(mode === 'robot'){
+  if(mode !== 'cat'){
     eye('', 'l', 110, 1);
     eye('', 'r', 290, -1);
     const o = cur.o * 46;
@@ -1514,18 +1717,19 @@ function say(text, m){
   sayEl.textContent = '“' + text + '”';
   if(!('speechSynthesis' in window)){
     sayEl.textContent = 'Questo browser non legge ad alta voce.';
-    mood = 'idle';
+    mood = baseMood();
     return;
   }
   speechSynthesis.cancel();
   const u = new SpeechSynthesisUtterance(text);
   u.lang = 'it-IT';
   if(voices[0]) u.voice = voices[0];
-  u.pitch = parseFloat($('pitch').value);
-  u.rate = 1.08;
+  const vp2 = voiceParams();
+  u.pitch = vp2.pitch;
+  u.rate = vp2.rate;
   u.onstart = () => { speaking = true; mood = m || 'happy'; robotStage.classList.add('is-speaking'); };
   u.onboundary = () => { cur.o = 1; };
-  const end = () => { speaking = false; mood = 'idle'; robotStage.classList.remove('is-speaking'); };
+  const end = () => { speaking = false; mood = baseMood(); robotStage.classList.remove('is-speaking'); };
   u.onend = end;
   u.onerror = end;
   speechSynthesis.speak(u);
@@ -1545,7 +1749,16 @@ function ageRules(){
   const a = currentAge();
   return (AGE_RULES[a] ? AGE_RULES[a] + ' ' : '') + SAFETY_ALWAYS;
 }
-function buildSys(){ return SYS_BASE + ' ' + ageRules(); }
+const PERSONALITY_RULES = {
+  playful: 'Sei giocherellone: rispondi in modo vivace e allegro, con giochi e battute semplici.',
+  cuddly: 'Sei coccolone: parla con dolcezza, frasi brevi e rassicuranti.',
+  curious: 'Sei curioso: fai al bambino una domanda semplice e proponi piccole scoperte.'
+};
+function buildSys(){
+  const pers = PERSONALITY_RULES[personality] ? ' ' + PERSONALITY_RULES[personality] : '';
+  const monk = mode==='monk' ? ' Sei un monaco zen: parla con calma, frasi brevissime, invita a respirare piano e a stare un momento in silenzio.' : '';
+  return SYS_BASE + ' ' + ageRules() + pers + monk;
+}
 const TAGS = {
   felice:'happy', curioso:'curious', triste:'sad', sorpreso:'surprised',
   arrabbiato:'angry', sonnolento:'sleepy', risata:'laugh', affetto:'affection',
@@ -1652,7 +1865,7 @@ async function ask(text){
         429:'Troppe richieste, aspetta un minuto e riprova.'
       }[r.status] || ('Errore '+r.status+' da Gemini.');
       sayEl.textContent = msg;
-      setTimeout(()=>{ if(!speaking) mood='idle'; }, 2500);
+      setTimeout(()=>{ if(!speaking) mood = baseMood(); }, 2500);
       return;
     }
     const j = await r.json();
@@ -1660,7 +1873,7 @@ async function ask(text){
       .map(p => p.text || '').join('').trim();
     if(!t){
       hist.pop();
-      mood = 'idle';
+      mood = baseMood();
       sayEl.textContent = 'Non ho una risposta, riprova.';
       return;
     }
@@ -1679,7 +1892,7 @@ async function ask(text){
     hist.pop();
     mood = 'sad';
     sayEl.textContent = 'Non riesco a collegarmi: controlla la connessione.';
-    setTimeout(()=>{ if(!speaking) mood='idle'; }, 2500);
+    setTimeout(()=>{ if(!speaking) mood = baseMood(); }, 2500);
   }
 }
 
@@ -1706,7 +1919,7 @@ function updateMicUI(on){
   }else{
     micStatus.textContent = continuousMode ? 'Ascolto continuo in pausa' : '';
     micStatus.style.color = 'var(--muted)';
-    if(!speaking && mood === 'listen') mood = 'idle';
+    if(!speaking && mood === 'listen') mood = baseMood();
   }
 }
 
@@ -1877,8 +2090,9 @@ function doShake(){
   robotGesture('wave', 1200);
   mood = 'angry';
   playSound('annoy');
+  spawnStars(6);
   say(SHAKE_PHRASES[Math.floor(Math.random()*SHAKE_PHRASES.length)], 'angry');
-  setTimeout(()=>{ if(!speaking && mood==='angry') mood='idle'; }, 2000);
+  setTimeout(()=>{ if(!speaking && mood==='angry') mood = baseMood(); }, 2000);
 }
 
 function onDeviceMotion(e){
@@ -1901,8 +2115,10 @@ function onDeviceMotion(e){
   }
 }
 
+let shakeAsked = false;
 function enableShake(){
-  if(shakeListening || !('DeviceMotionEvent' in window)) return;
+  if(shakeAsked || shakeListening || !('DeviceMotionEvent' in window)) return;
+  shakeAsked = true; // chiedi il permesso una sola volta
   const start = () => {
     window.addEventListener('devicemotion', onDeviceMotion);
     shakeListening = true;
@@ -1915,7 +2131,7 @@ function enableShake(){
   };
   // iOS 13+ chiede il permesso esplicitamente, e va chiesto da un tocco dell'utente
   if(typeof DeviceMotionEvent.requestPermission === 'function'){
-    DeviceMotionEvent.requestPermission().then(r => { if(r === 'granted') start(); else sayEl.textContent = 'Senza il permesso al movimento non posso sentire gli scossoni.'; }).catch(()=>{});
+    DeviceMotionEvent.requestPermission().then(r => { if(r === 'granted') start(); }).catch(()=>{});
   }else{
     start();
   }
@@ -1925,6 +2141,34 @@ if(typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestP
   enableShake();
 }
 document.addEventListener('pointerdown', enableShake);
+
+// Umore di base: il robot resta in idle quando non fa altro
+/* Reazione al tempo: ora del giorno e tempo dall'ultima visita */
+function baseMood(){
+  const h = new Date().getHours();
+  if(h >= 21 || h < 7) return 'sleepy';   // di notte il robot ha sonno
+  return 'idle';
+}
+const SEEN_KEY = 'lastSeen';
+function markSeen(){ store.set(SEEN_KEY, String(Date.now())); }
+function greetAfterAbsence(){
+  const last = parseInt(store.get(SEEN_KEY) || '0', 10);
+  if(!last) return;                        // prima visita: nessun saluto speciale
+  const hours = (Date.now() - last) / 3600000;
+  if(hours >= 24){
+    setTimeout(()=>{ if(!speaking) say('Ciao! Mi sei mancato tantissimo!', 'affection'); }, 1500);
+  }else if(hours >= 1){
+    setTimeout(()=>{ if(!speaking) say('Bentornato! Mi sei mancato un po’.', 'curious'); }, 1500);
+  }
+}
+greetAfterAbsence();
+markSeen();
+if(!speaking) mood = baseMood();
+setInterval(markSeen, 60000);
+window.addEventListener('pagehide', markSeen);
+document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState === 'hidden') markSeen(); });
+// ogni minuto aggiorna l'umore di base (passaggio giorno/notte) se il robot non sta facendo altro
+setInterval(()=>{ if(!speaking && (mood === 'idle' || mood === 'sleepy')) mood = baseMood(); }, 60000);
 
 // Fascia d'età: salvata nel browser e ripristinata all'avvio
 $('ageLevel').value = currentAge();

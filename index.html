@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Robottino Educativo — v3.6 Impara ampliato + Voce maschile + IA</title>
+<title>Robottino Educativo — v3.7 Impara sempre visibile + Voce maschile + IA</title>
 <style>
 :root{--bg:#e9eef4;--fg:#18212d;--muted:#5a6676;--card:#fff;--line:#c9d2de;--accent:#0b8fb3;--accent-fg:#fff;
 box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
@@ -188,6 +188,9 @@ input[type=text],input[type=password],select,textarea{background:var(--card);col
 .reward-toast{background:var(--card);color:var(--fg)}
 :root[data-pack="notte"] .command-panel,:root[data-pack="notte"] details,:root[data-pack="notte"] .say{background:var(--card);border-color:var(--line);color:var(--fg)}
 :root[data-pack="notte"] .mode-btn{background:#221a3f;color:#e6dcff;border-color:#4a3a7a}
+
+.edu-section details{border:2px solid var(--accent);border-radius:18px;padding:6px 10px 12px;background:var(--card)}
+.edu-section summary{font-size:1.15rem;font-weight:900}
 </style>
 </head>
 <body>
@@ -481,7 +484,25 @@ input[type=text],input[type=password],select,textarea{background:var(--card);col
 <button id="btnStopGame" style="display:none;margin-top:8px;width:100%;padding:10px;border-radius:12px;border:1px solid var(--line);background:var(--card)">Termina gioco</button>
 </details>
 
-<details id="eduPanel" open><summary>📚 Impara con Robottino</summary>
+<details id="bedtimePanel">
+<summary>Buonanotte</summary>
+<div style="margin-top:10px">
+<label style="display:block;margin-bottom:6px;color:var(--muted)">Quale storia</label>
+<select id="storyPick" aria-label="Scegli la storia" style="width:100%;background:var(--card);color:var(--fg);border:1px solid var(--line);border-radius:12px;padding:10px;font:inherit;margin-bottom:10px"><option value="random">Casuale</option><option value="0">I tre porcellini</option><option value="1">Cappuccetto Rosso</option><option value="2">Il brutto anatroccolo</option><option value="3">La lepre e la tartaruga</option><option value="4">Il leone e il topolino</option><option value="5">Pinocchio</option><option value="6">Riccioli d'oro e i tre orsi</option><option value="7">Il gatto con gli stivali</option><option value="8">La formica e la cicala</option><option value="9">Il cane e la sua ombra</option><option value="10">Cenerentola</option><option value="11">Pollicina</option><option value="12">I vestiti nuovi dell'imperatore</option><option value="13">La principessa sul pisello</option><option value="14">Rapunzel</option><option value="15">Jack e il fagiolo magico</option><option value="16">La volpe e la cicogna</option><option value="17">La gallina dalle uova d'oro</option><option value="18">Il pesciolino d'oro</option><option value="19">La bella addormentata</option><option value="gemini">Storia nuova (Gemini)</option></select>
+  <div class="row" style="margin-top:10px;gap:8px">
+    <button id="btnStoryAuto" class="mode-btn" style="flex:1">Racconto libero</button>
+    <button id="btnStoryInteractive" class="mode-btn" style="flex:1">Racconto interattivo</button>
+  </div>
+  <label style="margin-top:8px;display:flex;align-items:center;gap:8px">
+    <input id="ambientSound" type="checkbox"> Suono rilassante (pioggia)
+  </label>
+  <div id="storyStatus" style="margin-top:10px;font-size:.9rem;color:var(--muted);min-height:1.3em"></div>
+  <button id="btnStopStory" style="display:none;margin-top:8px;width:100%;padding:10px;border-radius:12px;border:1px solid var(--line);background:var(--card)">Interrompi racconto</button>
+</div>
+</details>
+</section>
+<section class="edu-section" id="eduSection" style="display:block;margin:14px auto 0;max-width:640px">
+<details id="eduPanel" open style="display:block"><summary>📚 Impara con Robottino</summary>
 <p style="font-size:.9rem;color:var(--muted);margin:8px 0 0">Scegli un argomento. Ogni attività è breve: 5 domande, con stellina alla fine. La Sfida mista ne ha 10, con argomenti a sorpresa!</p>
 <div class="edu-grid" id="eduGrid">
 <button class="edu-btn" data-edu="Numeri"><span>🔢</span>Numeri</button>
@@ -507,23 +528,8 @@ input[type=text],input[type=password],select,textarea{background:var(--card);col
 <div id="aiArea" style="margin-top:10px"></div>
 <p id="aiNote" style="font-size:.85rem;color:var(--muted)"></p>
 </div>
-</details><details id="bedtimePanel">
-<summary>Buonanotte</summary>
-<div style="margin-top:10px">
-<label style="display:block;margin-bottom:6px;color:var(--muted)">Quale storia</label>
-<select id="storyPick" aria-label="Scegli la storia" style="width:100%;background:var(--card);color:var(--fg);border:1px solid var(--line);border-radius:12px;padding:10px;font:inherit;margin-bottom:10px"><option value="random">Casuale</option><option value="0">I tre porcellini</option><option value="1">Cappuccetto Rosso</option><option value="2">Il brutto anatroccolo</option><option value="3">La lepre e la tartaruga</option><option value="4">Il leone e il topolino</option><option value="5">Pinocchio</option><option value="6">Riccioli d'oro e i tre orsi</option><option value="7">Il gatto con gli stivali</option><option value="8">La formica e la cicala</option><option value="9">Il cane e la sua ombra</option><option value="10">Cenerentola</option><option value="11">Pollicina</option><option value="12">I vestiti nuovi dell'imperatore</option><option value="13">La principessa sul pisello</option><option value="14">Rapunzel</option><option value="15">Jack e il fagiolo magico</option><option value="16">La volpe e la cicogna</option><option value="17">La gallina dalle uova d'oro</option><option value="18">Il pesciolino d'oro</option><option value="19">La bella addormentata</option><option value="gemini">Storia nuova (Gemini)</option></select>
-  <div class="row" style="margin-top:10px;gap:8px">
-    <button id="btnStoryAuto" class="mode-btn" style="flex:1">Racconto libero</button>
-    <button id="btnStoryInteractive" class="mode-btn" style="flex:1">Racconto interattivo</button>
-  </div>
-  <label style="margin-top:8px;display:flex;align-items:center;gap:8px">
-    <input id="ambientSound" type="checkbox"> Suono rilassante (pioggia)
-  </label>
-  <div id="storyStatus" style="margin-top:10px;font-size:.9rem;color:var(--muted);min-height:1.3em"></div>
-  <button id="btnStopStory" style="display:none;margin-top:8px;width:100%;padding:10px;border-radius:12px;border:1px solid var(--line);background:var(--card)">Interrompi racconto</button>
-</div>
-</details>
-</section>
+</details></section>
+
 <button id="parentBtn" class="parent-dot" aria-label="Area riservata all'adulto" title="Area adulto">···</button>
 <div id="starsBar" class="stars-bar" aria-label="Stelline conquistate"><span>⭐</span><span id="starsCount">0</span><span style="font-size:.85rem;color:var(--muted)">stelline</span><span id="badgeCount" style="font-size:.85rem;color:var(--muted)"></span></div>
 <div id="rewardToast" class="reward-toast" role="status" aria-live="polite"></div>
@@ -2369,7 +2375,7 @@ document.querySelectorAll('[data-edu]').forEach(b=>b.addEventListener('click',()
   const topic=b.dataset.edu; if(topic==='Memoria'){ try{$('btnMemoryGame').click();}catch(_){} return; }
   let qs=eduQs(topic); if(topic==='Sfida'){ const pool=[]; ['Numeri','Lettere e parole','Colori e forme','Animali e natura','Logica','Inglese','Emozioni','Spazio e scienza','Stagioni e tempo','Corpo umano'].forEach(tp=>{ eduQs(tp).forEach(q=>pool.push(Object.assign({},q,{topic:tp}))); }); qs=eduShuffle(pool).slice(0,10); }
   eduState={topic, qs:qs, i:0, stars:0, locked:false}; renderEdu();
-  try{openCommandPanel(); $('eduPanel').open=true;}catch(_){}
+  try{ $('eduPanel').open=true; document.getElementById('eduSection').scrollIntoView({behavior:'smooth',block:'start'}); }catch(_){}
   try{say('Facciamo un gioco su '+topic+'! Pronto?','curious');}catch(_){}
 }));
 $('btnStopEdu').addEventListener('click',()=>{ eduSpeakToken++; eduState=null; renderEdu(); try{say('Ok, abbiamo finito di imparare per ora!','happy');}catch(_){} });

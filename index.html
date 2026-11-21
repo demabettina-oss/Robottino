@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Robottino Educativo — v3.7 Impara sempre visibile + Voce maschile + IA</title>
+<title>Robottino Educativo — v3.8 Giochi Impara sempre visibile + Voce maschile + IA</title>
 <style>
 :root{--bg:#e9eef4;--fg:#18212d;--muted:#5a6676;--card:#fff;--line:#c9d2de;--accent:#0b8fb3;--accent-fg:#fff;
 box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
@@ -27,6 +27,7 @@ main{width:100%;max-width:440px;display:flex;flex-direction:column;align-items:c
 .cloth-layer{transform-box:fill-box;transform-origin:center 45%;animation:torsoFloat 3.8s ease-in-out infinite}
 #robotStage[data-cloth="natale"] .acc-svg:not(.acc-natale-cappello){display:none}
 #robotStage[data-cloth="natale"] .acc-natale-cappello{display:block}
+#robotStage[data-acc="zaino"] .zaino-back{display:block}
 #robotStage[data-acc="cuffie"] .headphones,#robotStage[data-acc="antenna"] .acc-antenna,#robotStage[data-acc="corona"] .acc-corona,#robotStage[data-acc="fiore"] .acc-fiore{display:block}
 /* riflesso lucido sullo schermo */
 .screen::after{content:"";position:absolute;inset:0;border-radius:inherit;background:linear-gradient(160deg,rgba(255,255,255,.16) 0%,rgba(255,255,255,0) 38%);pointer-events:none;z-index:2}
@@ -191,6 +192,120 @@ input[type=text],input[type=password],select,textarea{background:var(--card);col
 
 .edu-section details{border:2px solid var(--accent);border-radius:18px;padding:6px 10px 12px;background:var(--card)}
 .edu-section summary{font-size:1.15rem;font-weight:900}
+
+/* ---------- Robottino: Parla, sonno, giochi, pannello stato ---------- */
+.talk-near{display:block;margin:0 auto 8px;background:var(--accent);color:var(--accent-fg);border:0;border-radius:999px;padding:12px 26px;font-size:1.05rem;font-weight:800;box-shadow:0 4px 12px rgba(0,0,0,.14)}
+.talk-near:active{transform:scale(.98)}
+.talk-near[aria-pressed="true"]{outline:4px solid var(--fg)}
+.zzz{display:none;position:absolute;top:10%;right:10%;font-size:1.7rem;z-index:8;pointer-events:none;animation:zzzFloat 2.4s ease-in-out infinite}
+#robotStage[data-sleep="1"] .zzz{display:block}
+#robotStage[data-sleep="1"] .screen{filter:brightness(.55)}
+.toy-btn{display:none;position:absolute;right:2%;bottom:4%;z-index:8;width:62px;height:62px;border-radius:50%;border:2px solid var(--line);background:var(--card);font-size:1.8rem;box-shadow:0 4px 12px rgba(0,0,0,.16);animation:toyBob 1.6s ease-in-out infinite}
+#robotStage[data-toy="1"] .toy-btn{display:block}
+.toy-obj{display:none;position:absolute;left:46%;bottom:14%;font-size:2.2rem;z-index:8;pointer-events:none}
+#robotStage[data-toyrun]:not([data-toyrun="robottino"]) .toy-obj{display:block;animation:toyThrow 1.8s ease-out 1 both}
+.mini-bot{display:none;position:absolute;left:6%;bottom:6%;width:64px;height:auto;z-index:8;pointer-events:none}
+#robotStage[data-toyrun="robottino"] .mini-bot{display:block;animation:miniHop .6s ease-in-out 3}
+.pet-bars{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+.pet-row{display:grid;grid-template-columns:96px 1fr;align-items:center;gap:8px;font-size:.92rem}
+.pet-track{height:12px;border-radius:999px;background:var(--line);overflow:hidden}
+.pet-fill{height:100%;width:0;border-radius:999px;background:linear-gradient(90deg,#7fd1ff,#5fe3ff);transition:width .6s ease}
+.pet-status{min-height:1.4em;margin:10px 0 4px;font-weight:700;text-align:center}
+.pet-actions{margin-top:8px}
+.pet-actions button{flex:1 1 calc(50% - 8px)}
+.pet-danger{color:#b3261e}
+.pet-note{font-size:.82rem;color:var(--muted);margin:8px 0 0}
+@keyframes zzzFloat{0%,100%{transform:translateY(0);opacity:.9}50%{transform:translateY(-8px);opacity:.5}}
+@keyframes toyBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+@keyframes toyThrow{0%{transform:translate(-30px,20px) rotate(0)}40%{transform:translate(20px,-60px) rotate(180deg)}70%{transform:translate(60px,-10px) rotate(300deg)}100%{transform:translate(70px,0) rotate(360deg)}}
+@keyframes miniHop{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+
+/* ---------- Animazioni delle azioni di Robottino ---------- */
+.fx{display:none;position:absolute;left:50%;top:40%;font-size:2.2rem;z-index:9;pointer-events:none;white-space:nowrap}
+.fx[data-kind]:not([data-kind=""]){display:block}
+.fx[data-kind="eat"]{animation:fxEat 1.2s ease-in forwards}
+.fx[data-kind="bubbles"]{animation:fxBubbles 1.8s ease-out forwards}
+.fx[data-kind="bolt"]{animation:fxBolt 1.5s ease-in-out forwards}
+#robotStage[data-anim="eat"] .screen-wrap{animation:animEat 1.2s ease-in-out}
+#robotStage[data-anim="wash"] .robot-body-svg{animation:animWobble .5s ease-in-out 3}
+#robotStage[data-anim="charge"] .robot-body-svg{animation:animCharge .4s ease-in-out 4}
+#robotStage[data-anim="bounce"] .robot-body-svg{animation:animBounce .5s ease-out 3}
+#robotStage[data-anim="spin"] .robot-body-svg{animation:animSpin 1.2s ease-in-out}
+#robotStage[data-anim="yawn"] .screen-wrap{animation:animYawn 1.6s ease-in-out}
+#robotStage[data-anim="stretch"] .robot-body-svg{animation:animStretch 1.4s ease-in-out}
+#robotStage[data-anim="nod"] .screen-wrap{animation:animNod .9s ease-in-out}
+@keyframes fxEat{0%{transform:translate(110px,70px) scale(1);opacity:1}70%{transform:translate(10px,-40px) scale(.7);opacity:1}100%{transform:translate(0,-60px) scale(.2);opacity:0}}
+@keyframes fxBubbles{0%{transform:translateY(20px) scale(.6);opacity:0}25%{opacity:1}100%{transform:translateY(-90px) scale(1.2);opacity:0}}
+@keyframes fxBolt{0%{transform:scale(.6);opacity:0}30%{transform:scale(1.3);opacity:1}100%{transform:scale(1);opacity:0}}
+@keyframes animEat{0%,100%{transform:scale(1)}30%{transform:scale(1.04) translateY(-4px)}50%{transform:scale(.98)}70%{transform:scale(1.03)}}
+@keyframes animWobble{0%,100%{transform:rotate(0)}25%{transform:rotate(-4deg)}75%{transform:rotate(4deg)}}
+@keyframes animCharge{0%,100%{transform:scale(1);filter:none}50%{transform:scale(1.05);filter:brightness(1.35) drop-shadow(0 0 10px #ffe066)}}
+@keyframes animBounce{0%,100%{transform:translateY(0)}40%{transform:translateY(-18px)}70%{transform:translateY(-4px)}}
+@keyframes animSpin{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
+@keyframes animYawn{0%,100%{transform:translateY(0) scale(1)}40%{transform:translateY(4px) scale(1.02)}70%{transform:translateY(2px) scale(1.01)}}
+@keyframes animStretch{0%,100%{transform:scaleX(1) scaleY(1)}40%{transform:scaleX(.97) scaleY(1.05)}}
+@keyframes animNod{0%,100%{transform:rotate(0)}30%{transform:rotate(-6deg)}60%{transform:rotate(4deg)}}
+
+/* Azioni rapide sempre sotto Robottino, visibili senza scorrere */
+.pet-quick{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:min(94%,410px);margin:0 auto 8px}
+.pq{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 4px;border:1px solid var(--line);border-radius:16px;background:var(--card);color:var(--fg);font-weight:800;font-size:.8rem;box-shadow:0 3px 10px rgba(0,0,0,.08)}
+.pq:active{transform:scale(.97)}
+.pq-i{font-size:1.5rem;line-height:1}
+@media (max-height:820px){.robot-stage{height:min(56svh,460px);min-height:340px}}
+
+/* Proporzioni: tutto il contenuto del robottino scala con la larghezza dello schermo */
+.robot-stage{container-type:inline-size}
+.robot-body-svg{transform-origin:50% 100%}
+.spawn{position:absolute;z-index:9;pointer-events:none;line-height:1;font-size:min(12cqw,56px);transform:translate(-50%,-50%)}
+.zzz{left:10%;right:auto;top:8%}
+.mini-bot{display:none;width:20cqw;max-width:92px;height:auto}
+.toy-btn{top:4%;bottom:auto;right:3%;left:auto;width:15cqw;height:15cqw;min-width:44px;min-height:44px;max-width:64px;max-height:64px;font-size:min(7.5cqw,30px);animation:none;border-radius:50%;padding:0}
+#robotStage[data-toy="1"] .toy-btn{display:block}
+.toy-obj{display:none!important}
+
+/* Testa più proporzionata rispetto al corpo */
+.screen-wrap{width:43%;max-width:176px;top:36px}
+.screen{max-height:none}
+/* Ingrandisci: visibile quando non usi le funzioni Tamagotchi */
+.zoom-btn{display:block;margin:0 auto 8px;background:var(--card);color:var(--fg);border:1px solid var(--line);border-radius:999px;padding:9px 18px;font-size:.92rem;font-weight:700}
+.zoom-btn[aria-pressed="true"]{background:var(--accent);color:var(--accent-fg);border-color:var(--accent)}
+.robot-zoom .robot-stage{transform:scale(1.22);transform-origin:50% 0;margin-bottom:110px;transition:transform .35s ease}
+.robot-stage{transition:transform .35s ease}
+.robot-zoom .pet-quick,.robot-zoom #petPanel{display:none}
+
+/* Vasca da bagno per Lava */
+.bath-back,.bath-front{position:absolute;left:14%;width:72%;top:66%;height:34%;display:none;pointer-events:none}
+.bath-back{z-index:0}
+.bath-front{z-index:7}
+.bath-back svg,.bath-front svg{width:100%;height:100%;display:block;overflow:visible}
+#robotStage[data-bath="1"] .bath-back,#robotStage[data-bath="1"] .bath-front{display:block}
+#robotStage[data-bath="1"]{overflow:hidden}
+
+/* Filo dell'aquilone */
+.kite-string{position:absolute;left:0;top:0;height:1px;background:#6b7a8c;transform-origin:0 50%;z-index:8;pointer-events:none;border-radius:2px}
+
+/* Braccio alzato per l'aquilone */
+.raise-arm{position:absolute;width:12px;height:120px;margin-left:-6px;transform-origin:50% 100%;background:linear-gradient(90deg,#f4f8fb,#9fb3c4 60%,#5d7080);border:2px solid #4c5b80;border-radius:8px;z-index:4;pointer-events:none}
+.raise-arm::after{content:"";position:absolute;left:50%;top:-14px;width:24px;height:24px;margin-left:-12px;border-radius:50%;background:#dfe9f2;border:2px solid #4c5b80}
+
+/* Letto visto dall'alto */
+.bed-top{position:absolute;left:27%;width:46%;top:18%;display:none;z-index:1;pointer-events:none}
+.bed-top svg{width:100%;height:auto;display:block;overflow:hidden}
+#robotStage[data-bed="1"] .bed-top{display:block}
+#robotStage[data-bed="1"]{overflow:hidden}
+/* Bagno: la porta compare a sinistra */
+.wc-door{position:absolute;left:4%;bottom:8%;width:18cqw;height:34cqw;max-height:150px;display:flex;align-items:center;justify-content:center;font-size:min(10cqw,40px);background:#eef6fb;border:3px solid #9fb3c4;border-radius:14px 14px 0 0;z-index:3;pointer-events:none;opacity:0}
+.zaino-back{display:none;position:absolute;left:26%;top:40%;width:48%;height:40%;z-index:0;pointer-events:none}
+.zaino-front{display:none;position:absolute;left:31%;top:42%;width:38%;height:30%;z-index:2;pointer-events:none}
+.zaino-front svg{width:100%;height:100%;display:block;overflow:visible}
+#robotStage[data-acc="zaino"] .zaino-front{display:block}
+.zaino-back svg{width:100%;height:100%;display:block;overflow:visible}
+
+.moves-list{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px;max-height:52svh;overflow:auto}
+.move-btn{display:flex;flex-direction:column;align-items:flex-start;text-align:left;padding:7px 9px;border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--fg);font-size:.8rem;font-weight:700}
+.move-btn small{font-weight:400;color:var(--muted);font-size:.72rem;margin-top:2px}
+.move-caption{position:absolute;left:50%;bottom:2%;transform:translateX(-50%);max-width:92%;padding:6px 12px;border-radius:14px;background:rgba(255,255,255,.93);color:#3b3550;font-size:13px;line-height:1.3;text-align:center;opacity:0;transition:opacity .3s;pointer-events:none;z-index:10;box-shadow:0 3px 10px rgba(0,0,0,.12)}
+.move-caption.show{opacity:1}
 </style>
 </head>
 <body>
@@ -400,6 +515,7 @@ input[type=text],input[type=password],select,textarea{background:var(--card);col
     <circle cx="0" cy="0" r="6" fill="#ffd166"/>
   </g>
 </svg>
+
 <svg class="acc-svg acc-natale-cappello" viewBox="0 0 310 240" aria-hidden="true" focusable="false">
 <g transform="translate(150 40) scale(0.7) translate(-150 -40)">
   <path d="M52 46 Q120 40 150 6 Q190 -30 262 -42 Q236 0 252 46 Z" fill="#d62828" stroke="#8c1717" stroke-width="3" stroke-linejoin="round"/>
@@ -408,7 +524,99 @@ input[type=text],input[type=password],select,textarea{background:var(--card);col
 </g>
 </svg>
 </div><!-- /screen-wrap -->
+<div class="zzz" aria-hidden="true">💤</div>
+<button id="toyBtn" class="toy-btn" type="button" aria-label="Gioca con Robottino">🤖</button>
+<span id="toyObj" class="toy-obj" aria-hidden="true"></span>
+<span id="fx" class="fx" aria-hidden="true"></span>
+<svg class="mini-bot" viewBox="0 0 120 160" aria-hidden="true">
+  <defs><linearGradient id="mbSilver" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f4f8fb"/><stop offset=".55" stop-color="#9fb3c4"/><stop offset="1" stop-color="#5d7080"/></linearGradient></defs>
+  <line x1="60" y1="18" x2="60" y2="6" stroke="#4c5b80" stroke-width="3"/>
+  <circle cx="60" cy="4" r="4.5" fill="#ffd84d" stroke="#c9a100" stroke-width="1.5"/>
+  <rect x="26" y="18" width="68" height="52" rx="22" fill="url(#mbSilver)" stroke="#3e4e5b" stroke-width="2.5"/>
+  <rect x="34" y="28" width="52" height="30" rx="12" fill="#0b1118"/>
+  <circle cx="48" cy="42" r="4.5" fill="#5fe3ff"/>
+  <circle cx="72" cy="42" r="4.5" fill="#5fe3ff"/>
+  <line x1="52" y1="52" x2="68" y2="52" stroke="#5fe3ff" stroke-width="2" stroke-linecap="round"/>
+  <ellipse cx="20" cy="44" rx="8" ry="14" fill="url(#mbSilver)" stroke="#3e4e5b" stroke-width="2"/>
+  <ellipse cx="100" cy="44" rx="8" ry="14" fill="url(#mbSilver)" stroke="#3e4e5b" stroke-width="2"/>
+  <rect x="34" y="74" width="52" height="44" rx="14" fill="url(#mbSilver)" stroke="#3e4e5b" stroke-width="2.5"/>
+  <rect x="42" y="82" width="36" height="22" rx="8" fill="#0b1118" opacity=".85"/>
+  <circle cx="60" cy="93" r="5" fill="#5fe3ff"/>
+  <rect x="12" y="78" width="12" height="34" rx="6" fill="url(#mbSilver)" stroke="#3e4e5b" stroke-width="2"/>
+  <rect x="96" y="78" width="12" height="34" rx="6" fill="url(#mbSilver)" stroke="#3e4e5b" stroke-width="2"/>
+  <rect x="40" y="118" width="14" height="24" rx="5" fill="url(#mbSilver)" stroke="#3e4e5b" stroke-width="2"/>
+  <rect x="66" y="118" width="14" height="24" rx="5" fill="url(#mbSilver)" stroke="#3e4e5b" stroke-width="2"/>
+  <rect x="36" y="140" width="22" height="12" rx="5" fill="#26323d"/>
+  <rect x="62" y="140" width="22" height="12" rx="5" fill="#26323d"/>
+  <rect x="38" y="146" width="18" height="4" rx="2" fill="#7fe6ff"/>
+  <rect x="64" y="146" width="18" height="4" rx="2" fill="#7fe6ff"/>
+</svg>
+<div class="bath-back" aria-hidden="true"><svg viewBox="0 0 300 110" preserveAspectRatio="none">
+  <rect x="8" y="0" width="284" height="110" rx="26" fill="#eef4f9" stroke="#9fb3c4" stroke-width="3"/>
+  <g class="bath-water"><path d="M14 22 Q40 14 66 22 T118 22 T170 22 T222 22 T274 22 T300 22 V100 Q290 108 272 100 H28 Q10 108 0 100 Z" fill="rgba(90,190,255,.6)"/></g>
+</svg></div>
+<div class="bath-front" aria-hidden="true"><svg viewBox="0 0 300 110" preserveAspectRatio="none">
+  <path d="M0 16 Q0 4 14 4 H286 Q300 4 300 16 V110 H0 Z" fill="rgba(200,220,236,.55)" stroke="#8fa5b8" stroke-width="3"/>
+  <path d="M12 14 H288" stroke="#ffffff" stroke-width="4" stroke-linecap="round" opacity=".8"/>
+</svg></div>
+<div class="bed-top" aria-hidden="true"><svg viewBox="0 0 200 400" preserveAspectRatio="xMidYMid meet">
+  <defs><linearGradient id="bedSilver" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f4f8fb"/><stop offset=".6" stop-color="#9fb3c4"/><stop offset="1" stop-color="#5d7080"/></linearGradient></defs>
+  <g transform="translate(200 0) rotate(90)">
+  <rect x="0" y="0" width="400" height="200" rx="18" fill="#9b6b43" stroke="#6b4a2c" stroke-width="4"/>
+  <rect x="14" y="10" width="386" height="180" rx="12" fill="#eef6fb" stroke="#c9d6e2" stroke-width="2"/>
+  <rect x="0" y="0" width="22" height="200" rx="10" fill="#7a5a3b"/>
+  <rect x="30" y="34" width="84" height="56" rx="20" fill="#ffffff" stroke="#b8c7d6" stroke-width="2"/>
+  <rect x="30" y="110" width="84" height="56" rx="20" fill="#ffffff" stroke="#b8c7d6" stroke-width="2"/>
+  <g class="bed-robot">
+    <rect x="130" y="62" width="70" height="12" rx="6" fill="url(#bedSilver)" stroke="#3e4e5b" stroke-width="2"/>
+    <rect x="130" y="126" width="70" height="12" rx="6" fill="url(#bedSilver)" stroke="#3e4e5b" stroke-width="2"/>
+    <rect x="118" y="78" width="112" height="46" rx="18" fill="url(#bedSilver)" stroke="#3e4e5b" stroke-width="2.5"/>
+    <rect x="232" y="84" width="92" height="12" rx="6" fill="url(#bedSilver)" stroke="#3e4e5b" stroke-width="2"/>
+    <rect x="232" y="104" width="92" height="12" rx="6" fill="url(#bedSilver)" stroke="#3e4e5b" stroke-width="2"/>
+    <rect x="318" y="80" width="14" height="40" rx="5" fill="#26323d"/>
+    <rect x="42" y="90" width="12" height="20" rx="6" fill="url(#bedSilver)" stroke="#3e4e5b" stroke-width="2"/>
+    <g class="bed-head" style="transform-box:fill-box;transform-origin:50% 50%">
+    <rect x="52" y="72" width="66" height="56" rx="24" fill="url(#bedSilver)" stroke="#3e4e5b" stroke-width="2.5"/>
+    <rect x="62" y="86" width="46" height="28" rx="9" fill="#0b1118"/>
+    <path d="M71 100 Q78 106 85 100 M91 100 Q98 106 105 100" stroke="#5fe3ff" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    </g>
+  </g>
+  <g class="blanket" style="transform:translate(260px,0px)">
+    <rect x="164" y="18" width="222" height="164" rx="22" fill="#9fd0ff" stroke="#6fa9d6" stroke-width="3"/>
+    <path d="M184 40 H366 M184 160 H366" stroke="#7fb8e8" stroke-width="3" stroke-dasharray="10 8"/>
+    <rect x="152" y="18" width="20" height="164" rx="8" fill="#ffffff" opacity=".9"/>
+  </g>
+</g>
+</svg></div>
+<div class="zaino-back" aria-hidden="true"><svg viewBox="0 0 200 180" preserveAspectRatio="none"><rect x="6" y="20" width="188" height="150" rx="34" fill="#5b9bd5" stroke="#2f5f8a" stroke-width="4"/><path d="M70 14 Q100 -6 130 14" fill="none" stroke="#2f5f8a" stroke-width="7" stroke-linecap="round"/><rect x="6" y="60" width="188" height="12" rx="6" fill="#4a86c0"/></svg></div>
+<div class="zaino-front" aria-hidden="true"><svg viewBox="0 0 100 60" preserveAspectRatio="none"><path d="M16 0 Q14 30 22 60" fill="none" stroke="#2f5f8a" stroke-width="5" stroke-linecap="round"/><path d="M84 0 Q86 30 78 60" fill="none" stroke="#2f5f8a" stroke-width="5" stroke-linecap="round"/><rect x="44" y="24" width="12" height="7" rx="2" fill="#7fb8e8" stroke="#2f5f8a" stroke-width="1.5"/></svg></div>
+<div id="moveCaption" class="move-caption" aria-live="polite"></div>
 </div><!-- /robot-stage -->
+<button id="talk" class="talk-near" aria-pressed="false">🎤 Parla</button>
+<button id="zoomBtn" class="zoom-btn" type="button" aria-pressed="false">🔍 Ingrandisci Robottino</button>
+<div id="petActions" class="pet-quick" role="group" aria-label="Azioni di Robottino">
+  <button id="petFeed" class="pq" type="button"><span class="pq-i">🍎</span><span>Mangia</span></button>
+  <button id="petPlay" class="pq" type="button"><span class="pq-i">🎈</span><span>Gioca</span></button>
+  <button id="petWash" class="pq" type="button"><span class="pq-i">🛁</span><span>Lava</span></button>
+  <button id="petCharge" class="pq" type="button"><span class="pq-i">🔋</span><span>Ricarica</span></button>
+  <button id="petWC" class="pq" type="button"><span class="pq-i">🚽</span><span>Bagno</span></button>
+  <button id="petFeather" class="pq" type="button"><span class="pq-i">🪶</span><span>Piuma</span></button>
+  <button id="petSleep" class="pq" type="button"><span class="pq-i">😴</span><span>Dormi</span></button>
+</div>
+<details id="petPanel">
+<summary>🤖 Come sta Robottino</summary>
+<div class="pet-bars">
+  <div class="pet-row"><span>🍎 Fame</span><div class="pet-track"><div id="petFameBar" class="pet-fill"></div></div></div>
+  <div class="pet-row"><span>🎈 Gioco</span><div class="pet-track"><div id="petPlayBar" class="pet-fill"></div></div></div>
+  <div class="pet-row"><span>🛁 Pulizia</span><div class="pet-track"><div id="petCleanBar" class="pet-fill"></div></div></div>
+  <div class="pet-row"><span>🔋 Energia</span><div class="pet-track"><div id="petEnergyBar" class="pet-fill"></div></div></div>
+  <div class="pet-row"><span>🚽 Bagno</span><div class="pet-track"><div id="petBagnoBar" class="pet-fill"></div></div></div>
+</div>
+<p id="petStatus" class="pet-status" aria-live="polite"></p>
+<div class="row pet-actions"><button id="petReset" class="pet-danger" type="button">♻️ Resetta</button></div>
+<p class="pet-note">Quando è stanco va a letto da solo, alla fine della storia della buonanotte.</p>
+</details>
+
 
 <div class="say" id="say" aria-live="polite">Ciao! Sono qui, pronto a giocare con te.</div>
 <button class="menu-toggle" id="menuToggle" type="button" aria-label="Apri i comandi" aria-expanded="false" aria-controls="commandPanel">
@@ -417,7 +625,6 @@ input[type=text],input[type=password],select,textarea{background:var(--card);col
 <button id="dressBtn" class="dress-btn" aria-label="Vesti Robottino">👗 Vesti Robottino</button>
 <section class="command-panel" id="commandPanel" hidden>
 <div class="controls">
-<button id="talk" aria-pressed="false">Parla</button>
 <div id="micStatus" style="text-align:center;font-size:.85rem;color:var(--muted);min-height:1.2em"></div>
 <div class="row">
   <input id="txt" type="text" placeholder="Oppure scrivi qui" aria-label="Scrivi una frase">
@@ -442,7 +649,7 @@ input[type=text],input[type=password],select,textarea{background:var(--card);col
 <summary>Impostazioni</summary>
 <label style="margin-top:8px">Tema colore <select id="pack" aria-label="Tema colore" style="background:var(--card);color:var(--fg);border:1px solid var(--line);border-radius:12px;padding:10px;font:inherit"><option value="oceano">Oceano</option><option value="foresta">Foresta</option><option value="tramonto">Tramonto</option><option value="notte">Notte</option></select></label>
 <label style="margin-top:8px">Vestito <select id="cloth" aria-label="Vestito del robot" style="background:var(--card);color:var(--fg);border:1px solid var(--line);border-radius:12px;padding:10px;font:inherit"><option value="auto">Automatico</option><option value="nessuno">Nessuno</option><option value="mantello">Mantello</option><option value="sciarpa">Sciarpa</option><option value="natale">Babbo Natale</option></select></label>
-<label style="margin-top:8px">Accessorio <select id="accessory" aria-label="Accessorio del robot" style="background:var(--card);color:var(--fg);border:1px solid var(--line);border-radius:12px;padding:10px;font:inherit"><option value="cuffie">Cuffie</option><option value="antenna">Antenna</option><option value="corona">Corona</option><option value="fiore">Fiore</option><option value="nessuno">Nessuno</option></select></label>
+<label style="margin-top:8px">Accessorio <select id="accessory" aria-label="Accessorio del robot" style="background:var(--card);color:var(--fg);border:1px solid var(--line);border-radius:12px;padding:10px;font:inherit"><option value="cuffie">Cuffie</option><option value="antenna">Antenna</option><option value="corona">Corona</option><option value="fiore">Fiore</option><option value="zaino">Zaino</option><option value="nessuno">Nessuno</option></select></label>
 <label style="margin-top:8px"><input id="continuous" type="checkbox"> Ascolto continuo</label>
 <label style="margin-top:8px">Voce <select id="preset" aria-label="Preset voce" style="background:var(--card);color:var(--fg);border:1px solid var(--line);border-radius:12px;padding:10px;font:inherit"><option value="maschile">Maschile</option><option value="robottino">Robottino</option><option value="dolcetta">Dolcetta</option><option value="vivace">Vivace</option><option value="calmo">Calmo</option><option value="buffo">Buffo</option><option value="personalizzata">Personalizzata</option></select></label>
 <label style="margin-top:8px">Acutezza <input id="pitch" type="range" min="0" max="2" step="0.05" value="0.85" aria-label="Acutezza della voce"></label>
@@ -465,6 +672,12 @@ input[type=text],input[type=password],select,textarea{background:var(--card);col
 </div>
 </details>
 
+<details id="movesPanel">
+<summary>🎬 Tutti i movimenti del robottino</summary>
+<p class="pet-note">Tocca un movimento per vederlo. Il robottino lo fa subito, se il corpo è libero.</p>
+<div id="movesList" class="moves-list"></div>
+</details>
+
 <details id="memoryPanel">
 <summary>Memoria</summary>
 <div id="memoryList" style="margin-top:10px;font-size:.95rem;max-height:180px;overflow:auto"></div>
@@ -479,6 +692,14 @@ input[type=text],input[type=password],select,textarea{background:var(--card);col
 <div class="row" style="margin-top:10px;gap:8px">
   <button id="btnMemoryGame" class="mode-btn" style="flex:1">Memoria</button>
   <button id="btnRiddleGame" class="mode-btn" style="flex:1">Indovinelli</button>
+</div>
+<div class="row" style="margin-top:10px;gap:8px">
+  <button class="mode-btn" data-rob="labirinto" style="flex:1">🤖 Labirinto delle Stelle</button>
+  <button class="mode-btn" data-rob="percorso" style="flex:1">🌟 Percorso delle Stelle</button>
+</div>
+<div id="robGameBox" style="display:none;margin-top:12px">
+  <iframe id="robFrame" title="Gioco di Robottino" allow="fullscreen; autoplay" style="width:100%;height:min(70svh,520px);border:0;border-radius:16px;background:#fff8ec;display:block"></iframe>
+  <button id="robClose" style="margin-top:8px;width:100%;padding:10px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--fg)">Chiudi gioco</button>
 </div>
 <div id="gameArea" style="margin-top:12px;display:none"></div>
 <button id="btnStopGame" style="display:none;margin-top:8px;width:100%;padding:10px;border-radius:12px;border:1px solid var(--line);background:var(--card)">Termina gioco</button>
@@ -1002,8 +1223,8 @@ function applyPack(p){ if(!PACKS.includes(p)) p = 'oceano'; document.documentEle
 $('pack').addEventListener('change', ()=>{ store.set('pack', $('pack').value); applyPack($('pack').value); });
 applyPack(store.get('pack') || 'oceano');
 /* Accessorio del robot: cuffie, antenna, corona, fiore o nessuno */
-const ACCESSORI = ['cuffie','antenna','corona','fiore','nessuno'];
-const CLOTH_FOR_ACC = {corona:'mantello', fiore:'sciarpa', antenna:'sciarpa', cuffie:'sciarpa', nessuno:'nessuno'};
+const ACCESSORI = ['cuffie','antenna','corona','fiore','zaino','nessuno'];
+const CLOTH_FOR_ACC = {corona:'mantello', fiore:'sciarpa', antenna:'sciarpa', cuffie:'sciarpa', zaino:'sciarpa', nessuno:'nessuno'};
 function applyCloth(){
   const pref = store.get('cloth') || 'auto';
   const acc = robotStage.dataset.acc || 'cuffie';
@@ -1160,6 +1381,8 @@ async function runStory(interactive){
   if(storyRunning) return;
   storyRunning = true;
   storyPaused = false;
+  try{ if(window.__petWake) window.__petWake(); }catch(_){}
+  try{ robotStage.scrollIntoView({behavior:'smooth',block:'start'}); }catch(_){}
   $('btnStopStory').style.display = 'block';
   $('storyStatus').textContent = 'Sto preparando la storia…';
   $('bedtimePanel').open = true;
@@ -1197,6 +1420,7 @@ async function runStory(interactive){
       // fine
       await storySay('E ora è tempo di dormire. Sogni d\'oro.', 'sleepy');
       mood = 'sleepy';
+      try{ if(window.__petSleep) window.__petSleep(); }catch(_){}
       cur.lid = 0.85;
       $('storyStatus').textContent = 'Storia finita. Sogni d\'oro.';
       storyRunning = false;
@@ -1235,7 +1459,7 @@ $('btnStopStory').addEventListener('click', ()=>{
 
 function checkBedtimeCommand(text){
   const low = (text||'').toLowerCase();
-  if(/buonanotte|raccontami\s+una\s+storia|storia\s+della\s+buonanotte|voglio\s+dormire/.test(low)){
+  if(/buonanotte|raccontami\s+una\s+storia|storia\s+della\s+buonanotte/.test(low)){
     runStory(false);
     return true;
   }
@@ -1277,7 +1501,6 @@ function checkGameCommand(text){
   }
   return false;
 }
-
 
 function loadBotName(){
   return store.get(NAME_KEY) || 'Robottino';
@@ -1655,7 +1878,6 @@ function checkCompliment(text){
   return false;
 }
 
-
 let mood='idle', speaking=false;
 const cur={h:90, cheek:0, lid:0, o:0, gx:0, gy:0, blink:1, smile:12, ear:0, tilt:0};
 const M = {
@@ -1783,8 +2005,194 @@ function draw(){
 }
 requestAnimationFrame(frame);
 
+// Il corpo si muove una cosa alla volta: mentre un'azione è in corso, i gesti aspettano
+function lockBody(ms){ window.bodyLockUntil = Math.max(window.bodyLockUntil || 0, Date.now() + ms); }
+/* ---------- 30 movimenti del robottino ---------- */
+// Ogni movimento è una lista di parti del corpo con i fotogrammi e la durata.
+// b = corpo, h = testa, r/l = braccio destro/sinistro, rl/ll = gamba destra/sinistra
+const rot=(...a)=>a.map(v=>({rotate:v+'deg'}));
+const sc=(...a)=>a.map(v=>({scale:String(v)}));
+const tr=(...a)=>a.map(([x,y])=>({translate:`${x}px ${y}px`}));
+const NEW_GESTURES = {
+  saluto:[['r',rot(0,-115,-100,-122,-100,0),1600],['h',rot(0,-4,0),1600]],
+  applauso:[['r',rot(0,-50,-20,-50,-20,0),1400],['l',rot(0,50,20,50,20,0),1400],['b',tr([0,0],[0,-6],[0,0],[0,-6],[0,0]),1400]],
+  inchino:[['b',rot(0,10,10,0),1500],['h',rot(0,14,14,0),1500]],
+  si:[['h',rot(0,8,-4,8,0),1000]],
+  no:[['h',rot(0,-12,12,-12,12,0),1200]],
+  pensa:[['h',rot(0,-8,-8,0),1600],['r',rot(0,-70,-70,0),1600]],
+  sorpresa:[['b',sc(1,1.04,1),700],['r',rot(0,-120,-120,0),800],['l',rot(0,120,120,0),800],['h',rot(0,-5,0),800]],
+  saltello:[['b',tr([0,0],[0,-22],[0,0]),700]],
+  allegria:[['b',tr([0,0],[0,-14],[0,0],[0,-14],[0,0]),1100],['r',rot(0,-100,-70,-100,0),1100],['l',rot(0,100,70,100,0),1100]],
+  ballo:[['b',rot(0,-4,4,-4,4,0),1800],['r',rot(0,-60,-20,-60,0),1800],['l',rot(0,60,20,60,0),1800],['h',rot(0,-5,5,-5,0),1800]],
+  passo:[['ll',tr([0,0],[0,-8],[0,0]),900],['rl',tr([0,0],[0,0],[0,-8],[0,0]),900],['b',tr([0,0],[0,-2],[0,0]),900]],
+  corri:[['b',rot(0,6,6,0),1000],['ll',tr([0,0],[0,-10],[0,0],[0,0],[0,0]),1000],['rl',tr([0,0],[0,0],[0,0],[0,-10],[0,0]),1000]],
+  indica:[['r',rot(0,-90,-90,0),1600],['h',rot(0,-3,0),1600]],
+  pugno_alto:[['r',rot(0,-130,-115,-130,-115,0),1400],['b',tr([0,0],[0,-6],[0,0],[0,-6],[0,0]),1400]],
+  braccia_aperte:[['r',rot(0,-75,-75,0),1600],['l',rot(0,75,75,0),1600],['h',rot(0,-4,0),1600]],
+  abbraccio:[['r',rot(0,30,30,0),1600],['l',rot(0,-30,-30,0),1600],['b',sc(1,.98,1),1600]],
+  stiracchia:[['r',rot(0,-120,-120,0),1800],['l',rot(0,120,120,0),1800],['b',sc(1,1.04,1),1800]],
+  sbadiglio:[['h',rot(0,-10,-10,0),1800],['b',sc(1,1.02,1),1800]],
+  tremolio:[['b',tr([0,0],[-2,0],[2,0],[-2,0],[2,0],[0,0]),500],['r',rot(0,-3,3,-3,3,0),500]],
+  timido:[['b',sc(1,.97,.97,1),1600],['h',rot(0,10,10,0),1600],['r',rot(0,30,30,0),1600]],
+  orgoglio:[['b',sc(1,1.05,1.05,1),1600],['h',rot(0,-6,-6,0),1600],['r',rot(0,-15,-15,0),1600],['l',rot(0,15,15,0),1600]],
+  scusa:[['h',rot(0,12,12,0),1400],['r',rot(0,-40,-40,0),1400]],
+  ascolta:[['h',rot(0,10,10,0),2000],['b',rot(0,-2,-2,0),2000]],
+  avvicina:[['b',[{rotate:'0deg',scale:'1'},{rotate:'-5deg',scale:'1.03'},{rotate:'-5deg',scale:'1.03'},{rotate:'0deg',scale:'1'}],1200]],
+  allontanati:[['b',tr([0,0],[14,0],[14,0],[0,0]),1200]],
+  guarda_orologio:[['r',rot(0,-60,-60,0),1800],['h',rot(0,-4,0),1800]],
+  respira:[['b',sc(1,1.015,1,1.015,1),3000]],
+  ride:[['b',tr([0,0],[0,-6],[0,0],[0,-6],[0,0]),1000],['h',rot(0,-6,0,6,0),1000]],
+  cerca:[['h',rot(0,-25,25,0),2200],['b',rot(0,-3,3,0),2200]],
+  calma:[['b',sc(1,1.015,1,1.015,1),3500],['r',rot(0,0),3500]]
+};
+// Cosa significa ciascun movimento: serve all'IA per scegliere quello giusto
+const GESTURE_WHEN = {
+  saluto:'ciao o arrivederci', applauso:'bravo o festa', inchino:'ringraziare o rispetto', si:'sì o d\'accordo', no:'no o non so',
+  pensa:'domanda o ragionamento', sorpresa:'novità inattesa', saltello:'contentezza', allegria:'felicità', ballo:'musica o festa',
+  passo:'andiamo avanti insieme', corri:'entusiasmo o fretta', indica:'mostrare qualcosa là', pugno_alto:'vittoria o ce l\'ho fatta',
+  braccia_aperte:'benvenuto', abbraccio:'affetto o coccola', stiracchia:'risveglio o stanchezza', sbadiglio:'sonno o noia',
+  tremolio:'paura o freddo', timido:'imbarazzo', orgoglio:'complimento su di sé', scusa:'scusa o errore',
+  ascolta:'attenzione a quello che dice il bambino', avvicina:'vuole più vicinanza', allontanati:'rispetto dello spazio',
+  guarda_orologio:'parlare del tempo o dell\'ora', respira:'calma', ride:'divertimento', cerca:'cercare qualcosa', calma:'rilassarsi'
+};
+// Altri 70 movimenti (seconda serie)
+Object.assign(NEW_GESTURES, {
+  ciao_felice:[['r',rot(0,-110,-95,-110,-95,0),1300],['h',rot(0,3,0),1300]],
+  saluto_lungo:[['r',rot(0,-120,-105,-120,-105,-120,0),2200]],
+  sventola:[['r',rot(0,-100,-80,-100,-80,0),1500],['l',rot(0,80,60,80,0),1500]],
+  batti_mani_lento:[['r',rot(0,-40,-10,-40,0),1800],['l',rot(0,40,10,40,0),1800]],
+  bacio_aria:[['h',rot(0,-6,-6,0),1500],['r',rot(0,-30,-30,0),1500]],
+  cuore_mani:[['r',rot(0,-20,-20,0),1500],['l',rot(0,20,20,0),1500],['b',sc(1,1.02,1),1500]],
+  volo:[['b',tr([0,0],[0,-20],[0,-20],[0,0]),1600],['r',rot(0,-120,-120,0),1600],['l',rot(0,120,120,0),1600]],
+  nuota:[['b',rot(0,-6,6,-6,0),1800],['r',rot(0,-60,-20,-60,0),1800],['l',rot(0,60,20,60,0),1800]],
+  cammina_piano:[['ll',tr([0,0],[0,-4],[0,0]),1600],['rl',tr([0,0],[0,0],[0,-4],[0,0]),1600]],
+  salta_due:[['b',tr([0,0],[0,-20],[0,0],[0,-20],[0,0]),1000]],
+  capriola:[['b',rot(0,360),1200]],
+  giravolta:[['b',rot(0,360),1000],['r',rot(0,-30,-30,0),1000]],
+  punta_piedi:[['ll',tr([0,0],[0,-6],[0,-6],[0,0]),1000],['rl',tr([0,0],[0,-6],[0,-6],[0,0]),1000],['b',tr([0,0],[0,-6],[0,-6],[0,0]),1000]],
+  inciampa:[['b',rot(0,-20,10,-6,0),900],['r',rot(0,-90,-30,0),900]],
+  cade_piano:[['b',rot(0,-12,-4,0),1000]],
+  gattona:[['b',tr([0,0],[0,4],[0,0]),900],['h',rot(0,4,0),900]],
+  dormicchia:[['h',rot(0,15,15,0),2600],['b',sc(1,.98,1),2600]],
+  tende_mano:[['r',rot(0,-60,-60,0),1200]],
+  raccoglie:[['b',rot(0,12,12,0),1400],['r',rot(0,40,30,0),1400]],
+  spinge:[['b',tr([0,0],[-6,0],[0,0]),900],['r',rot(0,20,20,0),900]],
+  tira_corda:[['r',rot(0,-40,-40,0),1200],['l',rot(0,40,40,0),1200],['b',tr([0,0],[-3,0],[0,0]),1200]],
+  apre_scatola:[['r',rot(0,-70,-70,0),1500],['h',rot(0,-4,0),1500]],
+  scrive:[['r',rot(0,30,20,30,20,0),2000],['h',rot(0,6,0,6,0),2000]],
+  legge:[['h',rot(0,8,8,0),2400],['r',rot(0,-50,-50,0),2400]],
+  disegna:[['r',rot(0,-20,-10,-20,0),1800],['b',rot(0,-2,2,0),1800]],
+  canta:[['h',rot(0,-5,5,-5,5,0),2000],['b',tr([0,0],[0,-3],[0,0],[0,-3],[0,0]),2000],['r',rot(0,-30,-20,-30,0),2000]],
+  fischia:[['h',rot(0,8,0),1200],['b',sc(1,1.01,1),1200]],
+  batte_piede:[['rl',tr([0,0],[0,-6],[0,0],[0,-6],[0,0]),1000],['ll',tr([0,0],[0,0],[0,0]),1000]],
+  balla_tip:[['b',rot(0,-5,5,-5,5,0),1500],['r',rot(0,-70,-30,-70,0),1500],['l',rot(0,70,30,70,0),1500]],
+  gioca_palla:[['r',rot(0,-40,-20,-40,0),1200],['b',tr([0,0],[0,-10],[0,0]),1200]],
+  fa_bolle:[['r',rot(0,-60,-40,-60,0),1600],['h',rot(0,-3,0),1600]],
+  applaude_forte:[['r',rot(0,-55,-15,-55,-15,-55,0),1600],['l',rot(0,55,15,55,15,55,0),1600],['b',tr([0,0],[0,-4],[0,0]),1600]],
+  pensa_profondo:[['h',rot(0,-12,-12,0),2200],['r',rot(0,-80,-80,0),2200]],
+  ha_avuto_idea:[['r',rot(0,-120,-110,0),1000],['b',tr([0,0],[0,-10],[0,0]),1000]],
+  si_stupisce:[['b',sc(1,1.06,1),800],['h',rot(0,-8,0),800]],
+  sospira:[['b',sc(1,.98,1),1800],['h',rot(0,6,0),1800]],
+  ansima:[['b',tr([0,0],[0,-2],[0,0],[0,-2],[0,0]),1000],['h',rot(0,3,-3,3,0),1000]],
+  asciuga_fronte:[['r',rot(0,-130,-100,0),1600],['h',rot(0,-6,0),1600]],
+  si_stringe:[['b',sc(1,.96,1),1200],['r',rot(0,30,30,0),1200],['l',rot(0,-30,-30,0),1200]],
+  coccola_se:[['h',rot(0,8,0,8,0),1600],['r',rot(0,20,20,0),1600],['l',rot(0,-20,-20,0),1600]],
+  consola:[['r',rot(0,10,10,0),1600],['l',rot(0,-10,-10,0),1600],['h',rot(0,10,10,0),1600]],
+  ringrazia_cuore:[['h',rot(0,12,12,0),1500],['r',rot(0,-30,-30,0),1500]],
+  ammira:[['h',rot(0,-10,-10,0),1800],['b',sc(1,1.02,1),1800]],
+  osserva:[['h',rot(0,15,15,0),1600]],
+  sussurra:[['h',rot(0,8,8,0),1400],['b',sc(1,1.01,1),1400]],
+  grida_gioia:[['r',rot(0,-130,-120,-130,-120,0),1200],['l',rot(0,130,120,130,120,0),1200],['b',tr([0,0],[0,-12],[0,0]),1200]],
+  zampetta:[['b',tr([0,0],[0,-12],[0,0],[0,-12],[0,0]),1000],['ll',tr([0,0],[0,-6],[0,0]),1000],['rl',tr([0,0],[0,0],[0,-6],[0,0]),1000]],
+  cammino_fiero:[['b',sc(1,1.02,1),1600],['h',rot(0,-4,0),1600],['r',rot(0,-10,-10,0),1600]],
+  corre_veloce:[['b',rot(0,4,-4,4,0),800],['ll',tr([0,0],[0,-8],[0,0]),800],['rl',tr([0,0],[0,0],[0,-8],[0,0]),800]],
+  spazza:[['r',rot(0,30,-30,30,0),1200],['b',rot(0,-2,2,0),1200]],
+  si_gira:[['b',rot(0,8,-8,0),1200],['h',rot(0,-10,0),1200]],
+  guarda_sinistra:[['h',rot(0,-20,-20,0),1400]],
+  guarda_destra:[['h',rot(0,20,20,0),1400]],
+  alza_sopracciglio:[['h',rot(0,6,6,0),1000]],
+  sorride:[['h',rot(0,3,0),900],['b',sc(1,1.01,1),900]],
+  occhiolino:[['h',rot(0,-5,0,5,0),800]],
+  si_siede:[['b',tr([0,0],[0,12],[0,12]),1200],['ll',tr([0,0],[0,4],[0,4]),1200],['rl',tr([0,0],[0,4],[0,4]),1200]],
+  si_alza:[['b',tr([0,12],[0,0]),1200]],
+  accovacciati:[['b',tr([0,0],[0,14]),1400],['b2',sc(1,.96,1),1400]],
+  in_punta:[['b',tr([0,0],[0,-8],[0,0]),900],['ll',tr([0,0],[0,-4],[0,0]),900],['rl',tr([0,0],[0,-4],[0,0]),900]],
+  piega_ginocchio:[['ll',tr([0,0],[0,4],[0,0]),900],['rl',tr([0,0],[0,4],[0,0]),900]],
+  mani_fianchi:[['r',rot(0,30,30,0),1600],['l',rot(0,-30,-30,0),1600],['b',sc(1,1.02,1),1600]],
+  mostra_muscoli:[['r',rot(0,-135,-125,-135,0),1400],['l',rot(0,135,125,135,0),1400],['b',sc(1,1.03,1),1400]],
+  sbadiglio_mano:[['r',rot(0,-95,-95,0),1600],['h',rot(0,-8,0),1600]],
+  spaventato:[['b',tr([0,0],[10,0],[0,0]),900],['r',rot(0,-60,-60,0),900],['l',rot(0,60,60,0),900]],
+  imbarazzo:[['r',rot(0,-50,-40,-50,0),1600],['h',rot(0,10,0),1600]],
+  si_arrende:[['r',rot(0,-120,-120,0),1600],['l',rot(0,120,120,0),1600],['b',sc(1,.98,1),1600]],
+  tuffo:[['b',rot(0,15,15,0),1000],['r',rot(0,-60,-60,0),1000]],
+  festeggia_pieno:[['r',rot(0,-130,-115,-130,-115,0),1800],['l',rot(0,130,115,130,115,0),1800],['b',tr([0,0],[0,-14],[0,0],[0,-14],[0,0]),1800],['h',rot(0,-5,5,-5,0),1800]]
+});
+// Il corpo ha alcune parti che non sono in tabella: "b2" è il corpo in una seconda animazione
+for(const k of Object.keys(NEW_GESTURES)){ NEW_GESTURES[k]=NEW_GESTURES[k].map(t=>t[0]==='b2'?['b',t[1],t[2]]:t); }
+NEW_GESTURES.ridacchia=[['h',rot(0,4,-4,4,0),1200],['b',tr([0,0],[0,-2],[0,0],[0,-2],[0,0]),1200]];
+GESTURE_WHEN.ridacchia='risata leggera';
+Object.assign(GESTURE_WHEN, {
+  ciao_felice:'saluto gioioso', saluto_lungo:'saluto a una persona cara', sventola:'saluto da lontano',
+  batti_mani_lento:'approvazione calma', bacio_aria:'affetto con leggerezza', cuore_mani:'affetto o gratitudine',
+  volo:'sognare o immaginare di volare', nuota:'giocare in acqua', cammina_piano:'andare piano', salta_due:'festa',
+  capriola:'divertimento', giravolta:'gioia o sorpresa', punta_piedi:'essere attenti', inciampa:'piccolo errore buffo',
+  cade_piano:'stanchezza', gattona:'giocare per terra', dormicchia:'riposo o sonnolenza', tende_mano:'offrire aiuto',
+  raccoglie:'raccogliere qualcosa', spinge:'spingere o fare fatica', tira_corda:'gioco di forza',
+  apre_scatola:'aprire un regalo', scrive:'scrivere o fare i compiti', legge:'leggere una storia', disegna:'disegnare',
+  canta:'cantare', fischia:'spensieratezza', batte_piede:'impazienza', balla_tip:'musica', gioca_palla:'giocare con la palla',
+  fa_bolle:'fare le bolle', applaude_forte:'grande complimento', pensa_profondo:'domanda difficile',
+  ha_avuto_idea:'idea improvvisa', si_stupisce:'stupore', sospira:'sollievo o pazienza', ansima:'fatica',
+  asciuga_fronte:'lavoro fatto', si_stringe:'sentirsi stretti o piccoli', coccola_se:'consolarsi',
+  consola:'consolare chi è triste', ringrazia_cuore:'ringraziare col cuore', ammira:'ammirare qualcosa',
+  osserva:'guardare con attenzione', sussurra:'parlare piano', grida_gioia:'gioia grande', zampetta:'contentezza',
+  cammino_fiero:'sentirsi bravo', corre_veloce:'fretta o gioco', spazza:'pulire', si_gira:'cambiare posto',
+  guarda_sinistra:'guardare da una parte', guarda_destra:'guardare dall\'altra', alza_sopracciglio:'dubbio',
+  sorride:'sorriso dolce', occhiolino:'complicità', si_siede:'sedersi', si_alza:'alzarsi', accovacciati:'stare vicino a qualcuno piccolo',
+  in_punta:'arrivare in alto', piega_ginocchio:'giocare a basso', mani_fianchi:'sentirsi sicuro', mostra_muscoli:'forza',
+  sbadiglio_mano:'sonno', spaventato:'paura', imbarazzo:'imbarazzo un po\' divertito', si_arrende:'resa scherzosa',
+  tuffo:'buttarsi', festeggia_pieno:'festa piena'
+});
+const MOVE_DESC = {"saluto": "Alza il braccio destro e agita la mano per salutarti.", "applauso": "Batte le mani: è contento di quello che hai fatto.", "inchino": "Si inchina con rispetto, come per ringraziare.", "si": "Annuisce con la testa: sì, sono d'accordo.", "no": "Scuote la testa: no, questa volta non si può.", "pensa": "Inclina la testa e porta la mano al mento, mentre riflette.", "sorpresa": "Si ferma di colpo e alza le braccia, sorpreso da una novità.", "saltello": "Fa un piccolo salto dalla gioia.", "allegria": "Salta due volte agitando le braccia, pieno di allegria.", "ballo": "Dondola a destra e a sinistra, come se sentisse della musica.", "passo": "Fa un passo avanti, pronto ad andare insieme a te.", "corri": "Si piega in avanti e corre sul posto, impaziente.", "indica": "Alza il braccio e indica un punto, per farti guardare lì.", "pugno_alto": "Alza il pugno: ce l'ha fatta!", "braccia_aperte": "Apre le braccia come per dire benvenuto.", "abbraccio": "Avvicina le braccia al corpo, come per fare un abbraccio.", "stiracchia": "Si stiracchia allungando le braccia, come dopo una lunga pausa.", "sbadiglio": "Inclina la testa all'indietro e sbadiglia: ha un po' di sonno.", "tremolio": "Trema un po': forse ha paura o ha freddo.", "timido": "Si fa piccolo e abbassa la testa, un po' imbarazzato.", "orgoglio": "Gonfia il petto e alza la testa, orgoglioso di sé.", "scusa": "Abbassa la testa e alza una mano: chiede scusa.", "ascolta": "Inclina la testa di lato, per ascoltarti meglio.", "avvicina": "Si avvicina a te, piano piano.", "allontanati": "Fa un passo indietro, rispettando il tuo spazio.", "guarda_orologio": "Guarda il polso, come per controllare l'ora.", "respira": "Respira lentamente: il petto sale e scende piano.", "ride": "Ride dolcemente, con la testa che si muove.", "cerca": "Gira la testa a destra e a sinistra, cercando qualcosa.", "calma": "Si rilassa e respira piano, con le braccia giù.", "ciao_felice": "Saluta con entusiasmo, felice di vederti.", "saluto_lungo": "Saluta a lungo con il braccio, come a una persona cara che si allontana.", "sventola": "Sventola entrambe le braccia per salutarti da lontano.", "batti_mani_lento": "Batte le mani piano, con calma e approvazione.", "bacio_aria": "Inclina la testa e muove il braccio, come per mandare un bacio.", "cuore_mani": "Unisce le mani davanti al petto, come per un cuore.", "volo": "Allarga le braccia e si alza un poco, come se volasse.", "nuota": "Muove le braccia avanti e indietro, come quando nuota.", "cammina_piano": "Cammina piano, passo dopo passo.", "salta_due": "Salta due volte, pieno di energia.", "capriola": "Fa una capriola su se stesso.", "giravolta": "Fa una giravolta, contento.", "punta_piedi": "Si alza sulla punta dei piedi per vedere più lontano.", "inciampa": "Inciampa un po' e agita le braccia per non cadere.", "cade_piano": "Si piega un po' di lato, stanco, come se stesse per sedersi.", "gattona": "Si abbassa e avanza piano, come un gattino.", "dormicchia": "Inclina la testa e chiude gli occhi per un pisolino.", "tende_mano": "Tende una mano per offrirti aiuto.", "raccoglie": "Si piega per raccogliere qualcosa da terra.", "spinge": "Spinge con le braccia in avanti, facendo un po' di fatica.", "tira_corda": "Tira una corda immaginaria con tutte e due le braccia.", "apre_scatola": "Apre una scatola con curiosità.", "scrive": "Muove il braccio come se stesse scrivendo.", "legge": "Inclina la testa e tiene un libro: sta leggendo.", "disegna": "Muove il braccio come se disegnasse con un pennello.", "canta": "Muove la testa e il corpo a tempo, come se cantasse.", "fischia": "Fischietta, spensierato, mentre dondola un poco.", "batte_piede": "Batte il piede a terra, impaziente.", "balla_tip": "Balla con le braccia in alto, a tempo di musica.", "gioca_palla": "Lancia una palla immaginaria e la riprende.", "fa_bolle": "Muove il braccio come per fare le bolle di sapone.", "applaude_forte": "Applaude forte, per un grande complimento.", "pensa_profondo": "Porta la mano al mento e inclina la testa: è una domanda difficile.", "ha_avuto_idea": "Alza il braccio di scatto: ha avuto un'idea!", "si_stupisce": "Si ingrandisce un po' e inclina la testa, stupito.", "sospira": "Si abbassa un poco e sospira, sollevato.", "ansima": "Respira affannato, come se avesse fatto fatica.", "asciuga_fronte": "Passa la mano sulla fronte, come dopo un lavoro fatto.", "si_stringe": "Si stringe un po', con le braccia vicine al corpo.", "coccola_se": "Si accarezza le braccia, come per consolarsi.", "consola": "Muove le braccia dolcemente, per consolare chi è triste.", "ringrazia_cuore": "Porta la mano al petto e inclina la testa per ringraziarti.", "ammira": "Si ingrandisce un poco e guarda con ammirazione.", "osserva": "Inclina la testa in avanti, guardando con attenzione.", "sussurra": "Inclina la testa e parla piano, come un segreto.", "grida_gioia": "Alza entrambe le braccia e salta dalla gioia.", "zampetta": "Zampetta sul posto, contento come un cucciolo.", "cammino_fiero": "Cammina a testa alta, sentendosi bravo.", "corre_veloce": "Corre sul posto, veloce, di fretta.", "spazza": "Muove il braccio avanti e indietro, come quando spazza.", "si_gira": "Si gira un poco, cambiando posizione.", "guarda_sinistra": "Gira la testa a sinistra per guardare da quella parte.", "guarda_destra": "Gira la testa a destra per guardare da quella parte.", "alza_sopracciglio": "Inclina la testa di lato, con aria dubbiosa.", "sorride": "Sorride dolcemente, con il corpo rilassato.", "occhiolino": "Inclina la testa, come per farti l'occhiolino.", "si_siede": "Si abbassa lentamente, come per sedersi.", "si_alza": "Si rialza lentamente dalla posizione bassa.", "accovacciati": "Si accovaccia per stare alla tua altezza.", "in_punta": "Si alza sulla punta dei piedi per arrivare più in alto.", "piega_ginocchio": "Piega un po' le ginocchia, per giocare più in basso.", "mani_fianchi": "Mette le mani sui fianchi, sicuro di sé.", "mostra_muscoli": "Piega le braccia e mostra i muscoli, come un supereroe.", "sbadiglio_mano": "Alza un braccio per coprire lo sbadiglio.", "spaventato": "Fa un passo indietro e alza le braccia, spaventato.", "imbarazzo": "Si gratta la testa con una mano, un po' imbarazzato.", "si_arrende": "Alza le braccia in segno di resa, scherzando.", "tuffo": "Si piega in avanti, come per tuffarsi.", "festeggia_pieno": "Salta con le braccia in alto: festeggia con tutto il corpo!", "ridacchia": "Ridacchia tremando un po', divertito."};
+function showMoveCaption(name){
+  const c=document.getElementById('moveCaption'); if(!c) return;
+  c.textContent=MOVE_DESC[name]||'';
+  c.classList.add('show');
+  clearTimeout(showMoveCaption.t);
+  showMoveCaption.t=setTimeout(()=>c.classList.remove('show'),3400);
+}
+const GESTURE_PROMPT = 'Gesti disponibili, da usare solo se coerenti con quello che dici: ' +
+  Object.keys(GESTURE_WHEN).map(k=>`[gesto:${k}] per ${GESTURE_WHEN[k]}`).join('; ') + '.';
+
+function gestEl(part){
+  const q={b:'.robot-body-svg',h:'.screen-wrap',r:'#rightArm',l:'#leftArm',rl:'#rightLeg',ll:'#leftLeg'}[part];
+  return q ? document.querySelector('#robotStage '+q) : null;
+}
+let gestAnims = [];
+function performGesture(name){
+  const tracks = NEW_GESTURES[name];
+  if(!tracks || !robotStage) return false;
+  if(Date.now() < (window.bodyLockUntil || 0)) return false;
+  if(robotStage.dataset.bed === '1' || robotStage.dataset.bath === '1') return false;
+  const total = Math.max(...tracks.map(t=>t[2]));
+  lockBody(total);
+  showMoveCaption(name);
+  gestAnims.splice(0).forEach(a=>{ try{ a.cancel(); }catch(_){} });
+  // durante il movimento spengo il movimento a riposo delle parti coinvolte, poi lo riaccendo
+  const used=[];
+  tracks.forEach(([part])=>{ const el=gestEl(part); if(el && !used.includes(el)){ used.push(el); el.style.animation='none'; } });
+  tracks.forEach(([part,frames,ms])=>{
+    const el=gestEl(part);
+    if(el) gestAnims.push(el.animate(frames,{duration:ms,easing:'ease-in-out'}));
+  });
+  setTimeout(()=>{ used.forEach(el=>{ el.style.animation=''; }); }, total+60);
+  return true;
+}
+
 function robotGesture(name, duration=1800){
   if(!robotStage) return;
+  if(NEW_GESTURES[name]) return performGesture(name);
+  if(Date.now() < (window.bodyLockUntil || 0)) return;
+  if(robotStage.dataset.bed === '1' || robotStage.dataset.bath === '1') return;
   robotStage.dataset.gesture = name;
   clearTimeout(robotGesture.timer);
   robotGesture.timer = setTimeout(()=>{
@@ -1798,7 +2206,7 @@ function scheduleRobotIdle(){
   scheduleRobotIdle.timer = setTimeout(()=>{
     const busy = document.hidden || speaking || listening || storyRunning || currentGame || !commandPanel.hidden;
     if(!busy){
-      const actions = ['look','wave','bounce','walk','open'];
+      const actions = ['look','wave','bounce','walk','open','respira','ascolta','cerca','ride','sbadiglio','si','no','pensa','guarda_orologio','ballo','saltello','allegria','stiracchia','scusa'];
       const action = actions[Math.floor(Math.random()*actions.length)];
       robotGesture(action, action==='walk' ? 1900 : 1500);
       if(hasInteracted && Math.random()<0.22){
@@ -1840,7 +2248,7 @@ function say(text, m){
   speechSynthesis.speak(u);
 }
 
-const SYS_BASE = 'Sei un robottino giocattolo simpatico e curioso che parla con un adulto. Rispondi sempre in italiano, con una o due frasi brevi e semplici, tono allegro. Inizia la risposta con un solo tag tra [felice], [curioso], [triste], [sorpreso], [arrabbiato], [sonnolento], [risata], [affetto], [confuso], [entusiasmo] che indica la tua emozione, poi la frase.';
+const SYS_BASE = 'Sei un robottino giocattolo simpatico e curioso che parla con un adulto. Rispondi sempre in italiano, con una o due frasi brevi e semplici, tono allegro. Inizia la risposta con un solo tag tra [felice], [curioso], [triste], [sorpreso], [arrabbiato], [sonnolento], [risata], [affetto], [confuso], [entusiasmo] che indica la tua emozione. Subito dopo puoi mettere un solo tag gesto tra [gesto:saluto], [gesto:applauso], [gesto:attenzione], [gesto:passo], [gesto:pensa], oppure [gesto:nessuno]. Scegli il gesto che corrisponde a quello che dici: saluto per un ciao o un arrivederci, applauso per un bravo o una festa, attenzione per indicare o avvisare, passo per andare avanti, pensa per una domanda o un ragionamento. Se non serve un gesto usa [gesto:nessuno]. Poi scrivi la frase.';
 
 /* Regole di sicurezza per fascia d'età (usate sia nelle chat sia nelle storie) */
 const SAFETY_ALWAYS = 'Regole sempre valide: non chiedere mai dati personali (nome completo, indirizzo, scuola, telefono). Non parlare di violenza, armi, droghe, sesso o contenuti spaventosi. Se il bambino chiede qualcosa di non adatto o pericoloso, rispondi con gentilezza e invitalo a chiedere a un adulto di fiducia.';
@@ -1862,7 +2270,7 @@ const PERSONALITY_RULES = {
 function buildSys(){
   const pers = PERSONALITY_RULES[personality] ? ' ' + PERSONALITY_RULES[personality] : '';
   const monk = mode==='monk' ? ' Sei un monaco zen: parla con calma, frasi brevissime, invita a respirare piano e a stare un momento in silenzio.' : '';
-  return SYS_BASE + ' ' + ageRules() + pers + monk;
+  return SYS_BASE + ' ' + ageRules() + pers + monk + ' ' + GESTURE_PROMPT + ' ' + ACTION_PROMPT;
 }
 const TAGS = {
   felice:'happy', curioso:'curious', triste:'sad', sorpreso:'surprised',
@@ -1870,6 +2278,8 @@ const TAGS = {
   confuso:'confused', entusiasmo:'enthusiastic',
   listen:'listen', think:'think'
 };
+const ACTION_PROMPT = 'Azioni disponibili, usale SOLO se il bambino le chiede o sono chiaramente richieste: [azione:bagno] per andare in bagno, [azione:dormi] per andare a letto, [azione:sveglia] per svegliarsi, [azione:piuma] per il solletico, [azione:zaino] per mettere lo zaino, [azione:nessuna] se non serve. Non usare mai dormi o bagno di tua iniziativa.';
+const GESTURE_TAGS = Object.assign({attenzione:'indica', nessuno:null}, Object.fromEntries(Object.keys(NEW_GESTURES).map(k=>[k,k])));
 let hist = [];
 
 /* Smista la richiesta al fornitore scelto. Il formato è quello di Gemini,
@@ -1911,6 +2321,7 @@ async function ask(text){
 
   // Comandi giochi
   if(checkGameCommand(text)) return;
+  if(checkTickleCommand(text)) return;
 
   // Comandi memoria
   if(checkMemoryCommand(text)) return;
@@ -1983,13 +2394,23 @@ async function ask(text){
       return;
     }
     hist.push({role:'model', parts:[{text:t}]});
-    let m = 'happy';
+    let m = 'happy', g = null, act = null;
+    const takeGesture = () => {
+      const gm = t.match(/^\s*\[gesto:(\w+)\]\s*/i);
+      if(gm){ g = GESTURE_TAGS[gm[1].toLowerCase()] || null; t = t.slice(gm[0].length); }
+      const am = t.match(/^\s*\[azione:(\w+)\]\s*/i);
+      if(am){ act = am[1].toLowerCase(); t = t.slice(am[0].length); }
+    };
+    takeGesture();
     const mt = t.match(/^\s*\[(\w+)\]\s*/);
     if(mt){
       m = TAGS[mt[1].toLowerCase()] || 'happy';
       t = t.slice(mt[0].length);
     }
+    takeGesture();
     say(t, m);
+    if(g) robotGesture(g, 1600);
+    if(act && typeof window.robotAction==='function') window.robotAction(act);
     // Proposta spontanea di ricordo se l'utente ha detto qualcosa di personale
     const lastUser = (hist.filter(h=>h.role==='user').slice(-1)[0]||{}).parts?.[0]?.text || '';
     maybeProposeMemory(lastUser, t);
@@ -2168,7 +2589,6 @@ $('go').addEventListener('click', ()=>{
 });
 $('txt').addEventListener('keydown', e => { if(e.key==='Enter') $('go').click(); });
 
-
 /* ---------- Scuotere il telefono: rabbia buffa ---------- */
 const SHAKE_THRESHOLD = 12;      // variazione di accelerazione (m/s²) considerata uno scossone
 const SHAKE_HITS_NEEDED = 3;     // scossoni ravvicinati necessari
@@ -2282,7 +2702,6 @@ $('ageLevel').addEventListener('change', ()=>{
   sayEl.textContent = $('ageLevel').value ? 'Ok, parlerò in modo adatto ai bambini di ' + $('ageLevel').value + ' anni.' : 'Ok, nessuna fascia di età impostata.';
 });
 
-
 /* ================= FASE 3: Modalita Genitore, premi, motivazione =================
    Riutilizza store/localStorage esistente. Nessuna libreria, nessun dato esterno.
    Nessun giudizio negativo mostrato al bambino: i dati "difficolta" vivono solo nell'area adulto. */
@@ -2333,7 +2752,6 @@ $('parentSave').addEventListener('click',()=>{ const band=document.querySelector
   try{ const v=prog.settings.ageBand==='3-6'?'3-5':(prog.settings.ageBand==='6-8'?'6-8':''); store.set('age',v); const sel=$('ageLevel'); if(sel) sel.value=v; }catch(_){} renderParent(); try{applyEduVisibility();}catch(_){} alert('Impostazioni salvate.'); });
 $('parentReset').addEventListener('click',()=>{ if(confirm('Azzerare tutti i progressi, le stelline e i premi? Questa azione non si può annullare.')){ if(confirm('Confermi davvero?')){ const s=prog.settings; prog={activities:0,attempts:0,correct:0,stars:0,topics:{},badges:[],days:{},settings:s,sessionActivities:0,lastSeen:Date.now()}; saveProg(); renderParent(); alert('Progressi azzerati.'); } } });
 saveProg(); renderParent();
-
 
 /* ===== v3.5 Parte educativa + IA interattiva ===== */
 let eduState=null; let eduSpeakToken=0;
@@ -2445,6 +2863,496 @@ $('aiStop').addEventListener('click',()=>{ aiStop(false); try{say('Ok, abbiamo f
 // All’avvio il microfono è sempre spento
 updateMicUI(false);
 
+/* ---------- Giochi di Robottino (embedded) ---------- */
+(function(){
+  const GAMES={labirinto:"<!DOCTYPE html>\n<html lang=\"it\">\n<head>\n<meta charset=\"UTF-8\">\n<meta name=\"viewport\" content=\"width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover\">\n<title>Il Labirinto delle Stelle Cadute - Robottino<\/title>\n<style>\n*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}\nhtml,body{height:100%;overflow:hidden;background:#fff8ec;font-family:system-ui,-apple-system,\"Segoe UI\",sans-serif;user-select:none;-webkit-user-select:none;touch-action:none}\n#game{position:fixed;inset:0;background:#fff8ec;overflow:hidden}\n#game.rot{width:100vh;height:100vw;top:0;left:100vw;transform-origin:top left;transform:rotate(90deg)}\n#view{position:absolute;inset:0;width:100%;height:100%;display:block}\n#mini{position:absolute;top:10px;right:10px;width:120px;height:120px;border:3px solid #fff;border-radius:14px;box-shadow:0 2px 8px rgba(80,60,120,.3);background:#fff}\n#hud{position:absolute;top:10px;left:10px;background:rgba(255,255,255,.88);border-radius:14px;padding:8px 12px;font-size:15px;line-height:1.5;color:#3b3550;box-shadow:0 2px 8px rgba(80,60,120,.2)}\n#hud b{color:#c2185b}\n#tools{position:absolute;top:140px;left:10px;display:flex;flex-direction:column;gap:6px;z-index:4}\n.tool{border:none;border-radius:10px;padding:6px 10px;font-size:12px;background:rgba(255,255,255,.9);color:#5b3f8c;font-weight:700;box-shadow:0 2px 6px rgba(0,0,0,.15);pointer-events:auto}\n#zone{position:absolute;top:16%;left:50%;transform:translate(-50%,-50%);background:rgba(255,255,255,.92);padding:8px 18px;border-radius:20px;font-weight:700;font-size:18px;color:#5b3f8c;opacity:0;transition:opacity .4s;pointer-events:none;white-space:nowrap;z-index:4}\n#zone.show{opacity:1}\n#flash{position:absolute;inset:0;background:rgba(255,120,140,.4);opacity:0;pointer-events:none;transition:opacity .3s}\n#ctx{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);padding:16px 24px;font-size:20px;font-weight:800;border:none;border-radius:999px;background:#ff8fb1;color:#fff;box-shadow:0 6px 0 #d4577e;display:none;z-index:5;pointer-events:auto}\n#robot{position:absolute;left:50%;bottom:4px;transform:translateX(-50%);width:84px;pointer-events:none;z-index:6}\n#robot .hand{transform-origin:102px 100px;animation:wave 1.4s ease-in-out infinite}\n@keyframes wave{0%,100%{transform:rotate(-12deg)}50%{transform:rotate(14deg)}}\n#bubble{position:absolute;bottom:112px;left:50%;transform:translateX(-50%);width:240px;background:#fff;border-radius:16px;padding:10px 12px;font-size:15px;line-height:1.35;color:#3b3550;text-align:center;box-shadow:0 4px 12px rgba(80,60,120,.25);opacity:0;transition:opacity .3s;pointer-events:none;z-index:6}\n#bubble.show{opacity:1}\n#controls{position:absolute;left:0;right:0;bottom:0;height:172px;display:flex;justify-content:space-between;align-items:flex-end;padding:0 10px 12px;pointer-events:none;z-index:7}\n#pad{display:grid;grid-template-columns:repeat(3,46px);gap:5px}\n.pb{width:46px;height:46px;border:none;border-radius:14px;background:rgba(255,255,255,.9);color:#5b3f8c;font-size:18px;font-weight:800;box-shadow:0 4px 0 rgba(91,63,140,.25);pointer-events:auto}\n#right{display:flex;flex-direction:column;gap:8px;width:120px}\n.big{height:50px;border:none;border-radius:16px;font-weight:800;font-size:14px;color:#3b3550;box-shadow:0 4px 0 rgba(0,0,0,.18);pointer-events:auto}\n.overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(255,248,236,.92);z-index:30;padding:16px}\n.hidden{display:none!important}\n.card{background:#fff;border-radius:22px;padding:22px 20px;max-width:380px;width:100%;text-align:center;box-shadow:0 8px 24px rgba(80,60,120,.25);color:#3b3550}\n.card h1{font-size:22px;color:#5b3f8c;margin-bottom:8px}\n.card h2{font-size:18px;color:#c2185b;margin-bottom:6px}\n.card p{font-size:15px;line-height:1.45;margin:8px 0}\n.btn{margin-top:12px;border:none;border-radius:999px;padding:14px 30px;font-size:18px;font-weight:800;background:#7fd1ff;color:#24405e;box-shadow:0 5px 0 #4fa6d6;pointer-events:auto}\n#qOpts{display:flex;flex-direction:column;gap:8px;margin-top:10px}\n.opt{border:none;border-radius:14px;padding:12px;font-size:16px;font-weight:700;background:#ffe9a8;color:#3b3550;box-shadow:0 4px 0 #e0b84d;pointer-events:auto}\n#qMsg{min-height:44px;color:#5b3f8c;font-weight:700}\n<\/style>\n<\/head>\n<body>\n<div id=\"game\">\n  <canvas id=\"view\"><\/canvas>\n  <canvas id=\"mini\" width=\"120\" height=\"120\"><\/canvas>\n  <div id=\"hud\">\n    <div id=\"hearts\"><\/div>\n    <div>⭐ Nuclei: <b id=\"nC\">0<\/b>/5<\/div>\n    <div>🤝 Guardiani: <b id=\"gC\">0<\/b>/5<\/div>\n    <div>🗺️ Mappa: <b id=\"mC\">0<\/b>/5<\/div>\n  <\/div>\n  <div id=\"tools\">\n    <button class=\"tool\" id=\"bFull\">⛶ Schermo intero<\/button>\n    <button class=\"tool\" id=\"bRot\">⟳ Ruota schermo<\/button>\n  <\/div>\n  <div id=\"zone\"><\/div>\n  <div id=\"flash\"><\/div>\n  <button id=\"ctx\"><\/button>\n  <div id=\"bubble\"><\/div>\n  <svg id=\"robot\" viewBox=\"0 0 120 130\">\n    <line x1=\"60\" y1=\"8\" x2=\"60\" y2=\"24\" stroke=\"#4c5b80\" stroke-width=\"4\"/>\n    <circle cx=\"60\" cy=\"8\" r=\"6\" fill=\"#ff5c8a\"/>\n    <rect x=\"26\" y=\"24\" width=\"68\" height=\"56\" rx=\"22\" fill=\"#cfe8ff\" stroke=\"#4c5b80\" stroke-width=\"3\"/>\n    <circle cx=\"46\" cy=\"50\" r=\"7\" fill=\"#3b3550\"/>\n    <circle cx=\"74\" cy=\"50\" r=\"7\" fill=\"#3b3550\"/>\n    <path d=\"M44 64 Q60 78 76 64\" stroke=\"#3b3550\" stroke-width=\"4\" fill=\"none\" stroke-linecap=\"round\"/>\n    <circle cx=\"36\" cy=\"62\" r=\"5\" fill=\"#ff9bb0\" opacity=\".7\"/>\n    <circle cx=\"84\" cy=\"62\" r=\"5\" fill=\"#ff9bb0\" opacity=\".7\"/>\n    <rect x=\"30\" y=\"84\" width=\"60\" height=\"36\" rx=\"12\" fill=\"#ffe49b\" stroke=\"#4c5b80\" stroke-width=\"3\"/>\n    <g class=\"hand\"><circle cx=\"102\" cy=\"100\" r=\"13\" fill=\"#cfe8ff\" stroke=\"#4c5b80\" stroke-width=\"3\"/><\/g>\n  <\/svg>\n  <div id=\"controls\">\n    <div id=\"pad\">\n      <span><\/span><button class=\"pb\" data-k=\"u\">▲<\/button><span><\/span>\n      <button class=\"pb\" data-k=\"l\">◀<\/button><span><\/span><button class=\"pb\" data-k=\"r\">▶<\/button>\n      <span><\/span><button class=\"pb\" data-k=\"d\">▼<\/button><span><\/span>\n    <\/div>\n    <div id=\"right\">\n      <button class=\"big\" data-k=\"f\" style=\"background:#7fd1ff\">AVANTI<\/button>\n      <button class=\"big\" id=\"bStun\" style=\"background:#ffd36b\">STORDISCI<\/button>\n      <button class=\"big\" id=\"bUnhook\" style=\"background:#b9a5ff\">TOGLI CUFFIE<\/button>\n    <\/div>\n  <\/div>\n\n  <div id=\"start\" class=\"overlay\">\n    <div class=\"card\">\n      <h1>Il Labirinto delle Stelle Cadute - Robottino<\/h1>\n      <p>Le stelle sono cadute dal cielo e si sono nascoste nel labirinto. Gli alieni hanno messo le cuffie con antenne ai Guardiani. Aiuta Robottino a liberarli, a trovare le stelle e a riaccendere il Motore delle Stelle!<\/p>\n      <p>◀ ▶ girano, ▲ ▼ camminano. Da tastiera: frecce, Z per stordire, X per togliere le cuffie.<\/p>\n      <button class=\"btn\" id=\"startBtn\">Inizia!<\/button>\n    <\/div>\n  <\/div>\n\n  <div id=\"quiz\" class=\"overlay hidden\">\n    <div class=\"card\">\n      <h2 id=\"qName\"><\/h2>\n      <p id=\"qRole\"><\/p>\n      <p id=\"qQ\" style=\"font-size:18px;font-weight:700\"><\/p>\n      <div id=\"qOpts\"><\/div>\n      <p id=\"qMsg\"><\/p>\n    <\/div>\n  <\/div>\n\n  <div id=\"win\" class=\"overlay hidden\">\n    <div class=\"card\">\n      <h1>Sei un vero Guardiano delle Stelle! ⭐<\/h1>\n      <p>Il Motore delle Stelle si è riacceso e il mondo è di nuovo luminoso. Festa di stelle!<\/p>\n      <button class=\"btn\" id=\"again\">Gioca ancora<\/button>\n    <\/div>\n  <\/div>\n<\/div>\n\n<script>\nconst $=id=>document.getElementById(id);\nconst cv=$('view'), ctx=cv.getContext('2d'), W=400, H=225;\ncv.width=W; cv.height=H;\nconst img=ctx.createImageData(W,H), buf=img.data, zBuf=new Float32Array(W);\nconst mini=$('mini'), mctx=mini.getContext('2d');\nconst MW=31, MH=31, FOV=Math.PI/3, FOG=[255,246,230];\nconst MOTOR={x:29.5,y:29.5};\nconst DIRS=[[1,0],[-1,0],[0,1],[0,-1]];\n\nconst ZONES=[\n {name:'Città',wall:[120,170,235],floor:[205,195,215],msg:'Benvenuto in Città! Le case hanno tanti colori.'},\n {name:'Scuola',wall:[245,200,90],floor:[235,220,190],msg:'Siamo nella Scuola! Ci sono tanti libri colorati.'},\n {name:'Parco',wall:[130,205,140],floor:[185,225,165],msg:'Nel Parco ci sono fiori e alberi gentili.'},\n {name:'Stazione',wall:[245,165,125],floor:[225,205,195],msg:'Alla Stazione i treni fanno tuuut, che bello!'},\n {name:'Fabbrica Aliena',wall:[190,150,230],floor:[205,195,235],msg:'Fabbrica Aliena: qui le luci fanno ballare i colori.'},\n {name:'Nave Madre',wall:[125,225,235],floor:[210,238,242],msg:'Siamo sulla Nave Madre! Il Motore è vicino!'}\n];\nconst GUARD_DEFS=[\n {name:'Astra',role:'Cavaliere delle Stelle, Guardiana della Soglia',color:'#ffb3d9',\n  quiz:{q:'Quante punte ha una stella comune?',opts:['3','5','8'],a:1,hint:'Conta le punte una alla volta!'},\n  clue:\"Il Motore dorme nell'ultima zona, in fondo al labirinto.\"},\n {name:'Titano',role:'Golem di Cristallo, Guardiano del Corridoio',color:'#9be7ff',\n  quiz:{q:'Di che colore è il cielo in una bella giornata?',opts:['Azzurro','Verde','Viola'],a:0,hint:'Pensa al sole e alle nuvole!'},\n  clue:'Le stelle amano i posti pieni di luce e di colori.'},\n {name:'Oracolo',role:'Guardiano delle Stelle',color:'#c9b6ff',\n  quiz:{q:'Quale animale fa \"miao\"?',opts:['Cane','Gatto','Mucca'],a:1,hint:'È il tuo amico peloso con i baffi!'},\n  clue:'Cerca le frecce colorate: ti porteranno avanti.'},\n {name:'Scout',role:'Drone Esploratore, Guardiano degli Angoli',color:'#ffe49b',\n  quiz:{q:'Quante zampe ha un cane?',opts:['Due','Quattro','Sei'],a:1,hint:'Pensa a come corre il tuo cane!'},\n  clue:'Negli angoli si nascondono le sorprese più belle.'},\n {name:'Regina',role:'Guardiana del Cuore, Boss finale',color:'#ff9bb0',\n  quiz:{q:'Quanti giorni ha una settimana?',opts:['5','7','10'],a:1,hint:'Lunedì, martedì, mercoledì...!'},\n  clue:'Il Motore ha bisogno di tutti i Nuclei per brillare!'}\n];\nconst GUARD_ZONES=[0,1,2,3,5];\nconst MINOR_DEFS=[\n {kind:'alieno',name:'Zippo',color:'#9be79b',msg:'Grazie! Ti regalo un cuoricino!'},\n {kind:'robot',name:'Bip',color:'#c9d3e3',msg:'Bip bop! Ora sono tuo amico!'},\n {kind:'papera',name:'Qua',color:'#ffe066',msg:'Qua qua! Grazie, ti voglio bene!'}\n];\n\nlet map=[], guards=[], minors=[], stars=[], miniBase=null, used=new Set();\nconst S={started:false,paused:false,won:false,celebrate:false,celebrateT:0,stars:0,freed:0,mapPieces:0,\n         hearts:5,zone:-1,hurtT:0,checkpoint:null,parts:[],motorHint:false};\nconst P={x:1.5,y:1.5,a:0};\nconst hold={};\nlet speakT=null, zoneT=null, ctxFn=null;\n\n/* ---------- Audio ---------- */\nlet AC=null;\nfunction initAudio(){ if(!AC){ AC=new (window.AudioContext||window.webkitAudioContext)(); } if(AC.state==='suspended') AC.resume(); }\nfunction beep(f=660,d=.15,type='sine',vol=.08){\n  if(!AC) return;\n  const o=AC.createOscillator(), g=AC.createGain();\n  o.type=type; o.frequency.value=f;\n  g.gain.setValueAtTime(vol,AC.currentTime);\n  g.gain.exponentialRampToValueAtTime(.0001,AC.currentTime+d);\n  o.connect(g).connect(AC.destination); o.start(); o.stop(AC.currentTime+d);\n}\nfunction chime(){ [523,659,784,1046].forEach((f,i)=>setTimeout(()=>beep(f,.25,'triangle',.06),i*110)); }\n\n/* ---------- Mondo ---------- */\nfunction genMaze(){\n  const m=[]; for(let y=0;y<MH;y++) m.push(new Array(MW).fill(1));\n  const st=[[1,1]]; m[1][1]=0;\n  while(st.length){\n    const [x,y]=st[st.length-1];\n    const ds=[[2,0],[-2,0],[0,2],[0,-2]].sort(()=>Math.random()-.5);\n    let moved=false;\n    for(const [dx,dy] of ds){\n      const nx=x+dx, ny=y+dy;\n      if(nx>0&&ny>0&&nx<MW-1&&ny<MH-1&&m[ny][nx]===1){\n        m[y+dy/2][x+dx/2]=0; m[ny][nx]=0; st.push([nx,ny]); moved=true; break;\n      }\n    }\n    if(!moved) st.pop();\n  }\n  for(let i=0;i<90;i++){\n    const x=1+Math.floor(Math.random()*(MW-2)), y=1+Math.floor(Math.random()*(MH-2));\n    if((x+y)%2===1) m[y][x]=0;\n  }\n  return m;\n}\nfunction zoneOf(x,y){\n  const zx=Math.min(2,Math.floor(x/(MW/3))), zy=Math.min(1,Math.floor(y/(MH/2)));\n  return zy*3+zx;\n}\nfunction inb(x,y){ return x>=0&&y>=0&&x<MW&&y<MH; }\nfunction solid(x,y){ const ix=Math.floor(x), iy=Math.floor(y); return !inb(ix,iy)||map[iy][ix]===1; }\nfunction blocked(x,y,r){ return solid(x-r,y-r)||solid(x+r,y-r)||solid(x-r,y+r)||solid(x+r,y+r); }\nfunction randCell(z){\n  for(let t=0;t<5000;t++){\n    const x=1+Math.floor(Math.random()*(MW-2)), y=1+Math.floor(Math.random()*(MH-2));\n    if(map[y][x]===0&&zoneOf(x,y)===z&&Math.hypot(x-1,y-1)>5&&!used.has(x+','+y)){\n      used.add(x+','+y); return {x,y};\n    }\n  }\n  return {x:1,y:1};\n}\nfunction setupWorld(){\n  map=genMaze(); used=new Set(); stars=[]; guards=[]; minors=[];\n  for(let z=0;z<5;z++){ const c=randCell(z); stars.push({x:c.x+.5,y:c.y+.5,got:false,ph:Math.random()*6}); }\n  GUARD_DEFS.forEach((d,i)=>{\n    const c=randCell(GUARD_ZONES[i]);\n    guards.push(Object.assign({},d,{kind:'guard',x:c.x+.5,y:c.y+.5,dx:0,dy:0,t:0,spd:.55,\n      stunned:false,stunT:0,headphones:true,friend:false,quizDone:false,warned:false}));\n  });\n  for(let i=0;i<6;i++){\n    const c=randCell(Math.floor(Math.random()*6)), d=MINOR_DEFS[i%3];\n    minors.push(Object.assign({},d,{x:c.x+.5,y:c.y+.5,dx:0,dy:0,t:0,spd:.7,\n      stunned:false,stunT:0,headphones:true,friend:false,warned:false}));\n  }\n  miniBase=buildMini();\n}\nfunction buildMini(){\n  const c=document.createElement('canvas'); c.width=120; c.height=120;\n  const g=c.getContext('2d'), k=120/MW;\n  for(let y=0;y<MH;y++) for(let x=0;x<MW;x++){\n    if(map[y][x]===1) g.fillStyle='#b8a6d6';\n    else { const f=ZONES[zoneOf(x,y)].floor; g.fillStyle=`rgb(${f.map(v=>Math.round(v*.5+127)).join(',')})`; }\n    g.fillRect(x*k,y*k,k+.5,k+.5);\n  }\n  return c;\n}\n\n/* ---------- Movimento nemici ---------- */\nfunction pickDir(e){\n  const opts=DIRS.filter(([dx,dy])=>!solid(e.x+dx*.8,e.y+dy*.8));\n  if(!opts.length){ e.dx=0; e.dy=0; return; }\n  let o=opts.filter(([dx,dy])=>!(dx===-e.dx&&dy===-e.dy));\n  if(!o.length) o=opts;\n  const [dx,dy]=o[Math.floor(Math.random()*o.length)];\n  e.dx=dx; e.dy=dy; e.t=1.2+Math.random()*2;\n}\nfunction updateEnemy(e,dt){\n  if(e.friend) return;\n  if(e.stunned){ e.stunT-=dt; if(e.stunT<=0) e.stunned=false; return; }\n  e.t-=dt;\n  if((e.dx===0&&e.dy===0)||e.t<=0) pickDir(e);\n  const nx=e.x+e.dx*e.spd*dt, ny=e.y+e.dy*e.spd*dt;\n  if(blocked(nx,ny,.3)) pickDir(e); else { e.x=nx; e.y=ny; }\n}\nfunction nearTarget(){\n  let best=null, bd=1.8;\n  const cs=Math.cos(P.a), sn=Math.sin(P.a);\n  for(const e of [...guards,...minors]){\n    if(e.friend) continue;\n    const dx=e.x-P.x, dy=e.y-P.y, d=Math.hypot(dx,dy);\n    if(d<bd && (dx*cs+dy*sn)/d>.2){ best=e; bd=d; }\n  }\n  return best;\n}\n\n/* ---------- Azioni ---------- */\nfunction speak(t,ms=3500){\n  const b=$('bubble'); b.textContent=t; b.classList.add('show');\n  clearTimeout(speakT); speakT=setTimeout(()=>b.classList.remove('show'),ms);\n}\nfunction showZone(name){\n  const z=$('zone'); z.textContent=name; z.classList.add('show');\n  clearTimeout(zoneT); zoneT=setTimeout(()=>z.classList.remove('show'),2600);\n}\nfunction sparks(n,color){\n  for(let i=0;i<n;i++) S.parts.push({x:W/2,y:H*.45,vx:(Math.random()-.5)*260,vy:(Math.random()-.9)*220,life:1,\n    c:color||['#ffd84d','#ff9bd1','#9be7ff'][i%3]});\n}\nfunction updateParts(dt){\n  for(const p of S.parts){ p.x+=p.vx*dt; p.y+=p.vy*dt; p.vy+=260*dt; p.life-=dt*.9; }\n  S.parts=S.parts.filter(p=>p.life>0);\n}\nfunction hurt(e){\n  S.hurtT=1.6; S.hearts--;\n  const f=$('flash'); f.style.opacity=.9; setTimeout(()=>f.style.opacity=0,250);\n  beep(220,.25,'sine',.06);\n  const d=Math.hypot(P.x-e.x,P.y-e.y)||1;\n  const nx=P.x+(P.x-e.x)/d*.8, ny=P.y+(P.y-e.y)/d*.8;\n  if(!blocked(nx,P.y,.22)) P.x=nx;\n  if(!blocked(P.x,ny,.22)) P.y=ny;\n  if(S.hearts<=0){\n    S.hearts=5;\n    if(S.checkpoint){ P.x=S.checkpoint.x; P.y=S.checkpoint.y; P.a=S.checkpoint.a; }\n    speak('Mi sono riposato un attimo! Ricominciamo da vicino.',4000);\n  } else speak('Ahi! Piano piano, Robottino ci riprova!',2500);\n}\nfunction stunAction(){\n  if(!S.started||S.paused) return;\n  const t=nearTarget();\n  if(!t){ speak('Avvicinati a un amico con le cuffie!',2200); return; }\n  if(t.stunned) return;\n  t.stunned=true; t.stunT=7;\n  beep(880,.2,'triangle',.05);\n  speak('Zac! Piccola luce gentile... ora stai fermo!',2500);\n}\nfunction unhookAction(){\n  if(!S.started||S.paused) return;\n  const t=nearTarget();\n  if(!t){ speak('Avvicinati a un amico con le cuffie!',2200); return; }\n  if(!t.stunned){ speak('Prima stordiscilo con la Stella di Luce!',2500); return; }\n  if(!t.headphones) return;\n  t.headphones=false; t.friend=true;\n  chime(); sparks(30);\n  if(t.kind==='guard'){\n    S.freed++;\n    speak(`Grazie ${t.name}! Rispondi alla domandina per il tuo pezzo di mappa!`,4000);\n    openQuiz(t);\n  } else {\n    if(S.hearts<5) S.hearts++;\n    speak(t.msg,3000);\n  }\n}\nfunction winAction(){\n  S.won=true; S.celebrate=true; chime(); sparks(80);\n  $('win').classList.remove('hidden');\n}\nfunction readyToWin(){ return S.stars>=5&&S.freed>=5; }\n\nfunction openQuiz(g){\n  S.paused=true;\n  Object.keys(hold).forEach(k=>hold[k]=false);\n  $('qName').textContent=g.name; $('qRole').textContent=g.role; $('qQ').textContent=g.quiz.q;\n  $('qMsg').textContent='Rispondi per ricevere il tuo pezzo di mappa!';\n  const box=$('qOpts'); box.innerHTML='';\n  g.quiz.opts.forEach((o,i)=>{\n    const b=document.createElement('button'); b.className='opt'; b.textContent=o;\n    b.onclick=()=>{\n      if(g.quizDone) return;\n      if(i===g.quiz.a){\n        g.quizDone=true; S.mapPieces++; chime(); sparks(60);\n        $('qMsg').textContent='Bravissimo! Hai trovato un pezzo di mappa!';\n        setTimeout(()=>{ $('quiz').classList.add('hidden'); S.paused=false; speak(g.clue,5000); },1400);\n      } else {\n        beep(330,.2,'sine',.05);\n        $('qMsg').textContent='Ci sei quasi! Ecco un aiutino: '+g.quiz.hint;\n      }\n    };\n    box.appendChild(b);\n  });\n  $('quiz').classList.remove('hidden');\n}\n\n/* ---------- Aggiornamento ---------- */\nfunction update(dt){\n  updateParts(dt);\n  if(S.celebrate){ S.celebrateT-=dt; if(S.celebrateT<=0){ sparks(6); S.celebrateT=.25; } }\n  if(!S.started||S.paused||S.won) return;\n  if(S.hurtT>0) S.hurtT-=dt;\n\n  const turn=(hold.l?-1:0)+(hold.r?1:0);\n  P.a+=turn*1.8*dt;\n  const mv=((hold.u||hold.f)?1:0)-(hold.d?1:0);\n  if(mv){\n    const sp=mv*2.3*dt, nx=P.x+Math.cos(P.a)*sp, ny=P.y+Math.sin(P.a)*sp;\n    if(!blocked(nx,P.y,.22)) P.x=nx;\n    if(!blocked(P.x,ny,.22)) P.y=ny;\n  }\n\n  const z=zoneOf(P.x,P.y);\n  if(z!==S.zone){\n    S.zone=z; S.checkpoint={x:P.x,y:P.y,a:P.a};\n    showZone(ZONES[z].name); speak(ZONES[z].msg,3500);\n  }\n\n  for(const e of [...guards,...minors]){\n    updateEnemy(e,dt);\n    const d=Math.hypot(e.x-P.x,e.y-P.y);\n    if(d>4) e.warned=false;\n    if(!e.friend&&!e.stunned&&d<2.6&&!e.warned){\n      e.warned=true;\n      speak(e.kind==='guard'?`Attento, c'è un Guardiano: ${e.name}!`:`Attento, c'è un amico con le cuffie! Stordiscilo con la Stella di Luce.`,3000);\n    }\n    if(!e.friend&&!e.stunned&&d<.45&&S.hurtT<=0) hurt(e);\n  }\n\n  for(const s of stars){\n    if(!s.got&&Math.hypot(s.x-P.x,s.y-P.y)<.6){\n      s.got=true; S.stars++; chime(); sparks(40);\n      speak(S.stars>=5?'Hai tutti i Nuclei! Ora trova il Motore!':`Bravo, hai trovato una stella! (${S.stars}/5)`,3000);\n    }\n  }\n}\nfunction updateCtx(){\n  if(S.won){ ctx_hide(); return; }\n  let label=null, fn=null;\n  const t=nearTarget();\n  const nearMotor=Math.hypot(P.x-MOTOR.x,P.y-MOTOR.y)<1.6;\n  if(t){\n    if(!t.stunned){ label='STORDISCI!'; fn=stunAction; }\n    else if(t.headphones){ label='TOGLI LE CUFFIE'; fn=unhookAction; }\n  } else if(nearMotor){\n    if(readyToWin()){ label='RIACCENDI IL MOTORE'; fn=winAction; }\n    if(!S.motorHint){\n      S.motorHint=true;\n      speak(readyToWin()?'Sei quasi arrivato! Premi RIACCENDI IL MOTORE!':`Mi servono ancora ${5-S.stars} Nuclei e ${5-S.freed} Guardiani!`,3500);\n    }\n  } else S.motorHint=false;\n  if(label){\n    $('ctx').style.display='block'; $('ctx').textContent=label; ctxFn=fn;\n  } else ctx_hide();\n}\nfunction ctx_hide(){ $('ctx').style.display='none'; ctxFn=null; }\n\n/* ---------- Render raycasting ---------- */\nfunction render(){\n  const dX=Math.cos(P.a), dY=Math.sin(P.a), pl=Math.tan(FOV/2), pX=-dY*pl, pY=dX*pl;\n  const zone=ZONES[S.zone<0?0:S.zone];\n  const r0x=dX-pX, r0y=dY-pY, r1x=dX+pX, r1y=dY+pY;\n  const half=H/2;\n  for(let x=0;x<W;x++){\n    const cam=2*x/W-1;\n    const rdx=dX+pX*cam, rdy=dY+pY*cam;\n    let mx=Math.floor(P.x), my=Math.floor(P.y);\n    const ddx=Math.abs(1/rdx), ddy=Math.abs(1/rdy);\n    let sx,sy,stX,stY;\n    if(rdx<0){ stX=-1; sx=(P.x-mx)*ddx; } else { stX=1; sx=(mx+1-P.x)*ddx; }\n    if(rdy<0){ stY=-1; sy=(P.y-my)*ddy; } else { stY=1; sy=(my+1-P.y)*ddy; }\n    let side=0, n=0;\n    while(n++<200){\n      if(sx<sy){ sx+=ddx; mx+=stX; side=0; } else { sy+=ddy; my+=stY; side=1; }\n      if(!inb(mx,my)||map[my][mx]===1) break;\n    }\n    const perp=Math.max(.05, side===0?sx-ddx:sy-ddy);\n    zBuf[x]=perp;\n    const lh=H/perp, ds=Math.max(0,Math.floor(half-lh/2)), de=Math.min(H-1,Math.floor(half+lh/2));\n    let wx=side===0?P.y+perp*rdy:P.x+perp*rdx; wx-=Math.floor(wx);\n    let u=wx; if((side===0&&rdx>0)||(side===1&&rdy<0)) u=1-u;\n    const fogW=Math.min(1,perp/14), shadeSide=side?.75:1;\n    const cellSeed=(mx*31+my*17)%7;\n    for(let y=0;y<H;y++){\n      const i=(y*W+x)*4;\n      let R,G,B;\n      if(y<ds){\n        const t=y/H;\n        R=190+(250-190)*t; G=215+(245-215)*t; B=255+(225-255)*t;\n        if(((x*73+y*151)%997)<1){ R=G=B=255; }\n      } else if(y>de){\n        const rowD=half/(y-half);\n        const fX=P.x+rowD*(r0x+(r1x-r0x)*x/W), fY=P.y+rowD*(r0y+(r1y-r0y)*x/W);\n        const ck=((Math.floor(fX*2)+Math.floor(fY*2))&1)?1.05:.95;\n        const fg=Math.min(1,rowD/12);\n        R=zone.floor[0]*ck*(1-fg)+FOG[0]*fg;\n        G=zone.floor[1]*ck*(1-fg)+FOG[1]*fg;\n        B=zone.floor[2]*ck*(1-fg)+FOG[2]*fg;\n      } else {\n        const v=(y-(half-lh/2))/lh;\n        const row=Math.floor(v*4), off=(row&1)*.5;\n        const cu=u*4+off, bu=cu-Math.floor(cu), bv=v*4-row;\n        if(bu<.07||bv<.1){ R=250; G=240; B=225; }\n        else {\n          const vary=1+((Math.floor(cu)*37+row*53+cellSeed*11)%9-4)*.02;\n          R=zone.wall[0]*vary; G=zone.wall[1]*vary; B=zone.wall[2]*vary;\n        }\n        R*=shadeSide; G*=shadeSide; B*=shadeSide;\n        R=R*(1-fogW)+FOG[0]*fogW; G=G*(1-fogW)+FOG[1]*fogW; B=B*(1-fogW)+FOG[2]*fogW;\n      }\n      buf[i]=R; buf[i+1]=G; buf[i+2]=B; buf[i+3]=255;\n    }\n  }\n  ctx.putImageData(img,0,0);\n}\n\nfunction shade(hex,f){\n  const n=parseInt(hex.slice(1),16);\n  let r=n>>16, g=(n>>8)&255, b=n&255;\n  const k=f<0?0:255, a=Math.abs(f);\n  r=Math.round(r+(k-r)*a); g=Math.round(g+(k-g)*a); b=Math.round(b+(k-b)*a);\n  return `rgb(${r},${g},${b})`;\n}\nfunction rr(x,y,w,h,r){\n  ctx.beginPath(); ctx.moveTo(x+r,y);\n  ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r);\n  ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath();\n}\nfunction drawStar(x,y,r,color,rot){\n  ctx.save(); ctx.translate(x,y); ctx.rotate(rot);\n  ctx.beginPath();\n  for(let i=0;i<10;i++){\n    const rad=i%2?r*.45:r, a=i*Math.PI/5-Math.PI/2;\n    ctx.lineTo(Math.cos(a)*rad,Math.sin(a)*rad);\n  }\n  ctx.closePath(); ctx.fillStyle=color; ctx.fill(); ctx.restore();\n}\nfunction drawChar(x,top,s,e,t){\n  const hr=s*.22, hx=x, hy=top+hr*1.25;\n  ctx.fillStyle=shade(e.color,-.12);\n  rr(hx-s*.2,hy+hr*.8,s*.4,s*.38,s*.08); ctx.fill();\n  ctx.fillStyle=e.color;\n  ctx.beginPath(); ctx.arc(hx,hy,hr,0,Math.PI*2); ctx.fill();\n  ctx.fillStyle='#3b3550';\n  ctx.beginPath(); ctx.arc(hx-hr*.4,hy-hr*.1,hr*.12,0,7); ctx.arc(hx+hr*.4,hy-hr*.1,hr*.12,0,7); ctx.fill();\n  ctx.strokeStyle='#3b3550'; ctx.lineWidth=Math.max(1,s*.03);\n  ctx.beginPath(); ctx.arc(hx,hy+hr*.1,hr*.45,.15*Math.PI,.85*Math.PI); ctx.stroke();\n  ctx.fillStyle='rgba(255,120,150,.6)';\n  ctx.beginPath(); ctx.arc(hx-hr*.6,hy+hr*.25,hr*.17,0,7); ctx.arc(hx+hr*.6,hy+hr*.25,hr*.17,0,7); ctx.fill();\n  if(e.kind==='papera'){\n    ctx.fillStyle='#ff9f3a';\n    ctx.beginPath(); ctx.moveTo(hx+hr*.9,hy+hr*.1); ctx.lineTo(hx+hr*1.4,hy+hr*.3); ctx.lineTo(hx+hr*.9,hy+hr*.5); ctx.closePath(); ctx.fill();\n  }\n  if(e.headphones){\n    ctx.strokeStyle='#4c5b80'; ctx.lineWidth=Math.max(1.5,s*.05);\n    ctx.beginPath(); ctx.arc(hx,hy,hr*1.12,Math.PI,2*Math.PI); ctx.stroke();\n    ctx.fillStyle='#4c5b80';\n    rr(hx-hr*1.3,hy-hr*.15,hr*.35,hr*.7,hr*.15); ctx.fill();\n    rr(hx+hr*.95,hy-hr*.15,hr*.35,hr*.7,hr*.15); ctx.fill();\n    ctx.strokeStyle='#4c5b80'; ctx.lineWidth=Math.max(1,s*.03);\n    ctx.beginPath(); ctx.moveTo(hx,hy-hr*1.12); ctx.lineTo(hx,hy-hr*1.12-s*.14); ctx.stroke();\n    ctx.fillStyle='#ff5c8a';\n    ctx.beginPath(); ctx.arc(hx,hy-hr*1.12-s*.14,Math.max(1.5,s*.035),0,7); ctx.fill();\n  }\n  if(e.stunned&&!e.friend){\n    for(let i=0;i<3;i++){\n      const a=t*3+i*2.1;\n      drawStar(hx+Math.cos(a)*hr*1.5, hy-hr*1.2+Math.sin(a)*hr*.35, Math.max(2,s*.06), '#ffd84d', a);\n    }\n  }\n  if(e.friend){\n    ctx.font=`${Math.max(10,s*.2)}px system-ui`; ctx.textAlign='center'; ctx.fillText('💖',hx,hy-hr*1.9);\n  }\n  ctx.font=`bold ${Math.max(9,s*.15)}px system-ui`; ctx.textAlign='center';\n  ctx.lineWidth=3; ctx.strokeStyle='rgba(255,255,255,.95)'; ctx.strokeText(e.name,hx,top-4);\n  ctx.fillStyle='#3b3550'; ctx.fillText(e.name,hx,top-4);\n}\nfunction drawWorld(now){\n  const t=now/1000;\n  const dX=Math.cos(P.a), dY=Math.sin(P.a), pl=Math.tan(FOV/2), pX=-dY*pl, pY=dX*pl;\n  const inv=1/(pX*dY-dX*pY);\n  const items=[{o:MOTOR,k:'motor'}];\n  guards.forEach(o=>items.push({o,k:'char'}));\n  minors.forEach(o=>items.push({o,k:'char'}));\n  stars.forEach(o=>{ if(!o.got) items.push({o,k:'star'}); });\n  items.forEach(it=>it.d=(it.o.x-P.x)**2+(it.o.y-P.y)**2);\n  items.sort((a,b)=>b.d-a.d);\n  for(const it of items){\n    const sx=it.o.x-P.x, sy=it.o.y-P.y;\n    const tX=inv*(dY*sx-dX*sy), tY=inv*(-pY*sx+pX*sy);\n    if(tY<.3) continue;\n    const sH=H/tY, cx=(W/2)*(1+tX/tY);\n    if(cx<-sH||cx>W+sH) continue;\n    const sc=Math.floor(Math.max(0,Math.min(W-1,cx)));\n    if(tY>zBuf[sc]+.05) continue;\n    const foot=H/2+sH*.5;\n    if(it.k==='char'){\n      drawChar(cx,foot-sH*.9,sH*.9,it.o,t);\n    } else if(it.k==='star'){\n      const r=Math.max(3,sH*.14), bob=Math.sin(t*3+it.o.ph)*sH*.05;\n      drawStar(cx,H/2-sH*.1+bob,r,'#ffd84d',t*2+it.o.ph);\n    } else {\n      const r=Math.max(7,sH*.4), cy=foot-r;\n      const g=ctx.createRadialGradient(cx,cy,r*.2,cx,cy,r*1.6);\n      g.addColorStop(0,'rgba(255,255,220,1)'); g.addColorStop(.5,'rgba(255,190,90,.8)'); g.addColorStop(1,'rgba(255,190,90,0)');\n      ctx.fillStyle=g; ctx.beginPath(); ctx.arc(cx,cy,r*1.6,0,7); ctx.fill();\n      ctx.fillStyle='#ff8a00'; ctx.beginPath(); ctx.arc(cx,cy,r*.6,0,7); ctx.fill();\n      for(let i=0;i<6;i++){\n        const a=t*1.5+i*Math.PI/3;\n        drawStar(cx+Math.cos(a)*r*1.3,cy+Math.sin(a)*r*.4,Math.max(2,r*.18),'#fff2a8',a);\n      }\n      ctx.font=`bold ${Math.max(9,r*.35)}px system-ui`; ctx.textAlign='center';\n      ctx.lineWidth=3; ctx.strokeStyle='rgba(255,255,255,.95)'; ctx.strokeText('Motore delle Stelle',cx,cy-r*1.8);\n      ctx.fillStyle='#5b3f8c'; ctx.fillText('Motore delle Stelle',cx,cy-r*1.8);\n    }\n  }\n}\nfunction drawParts(){\n  for(const p of S.parts){ ctx.globalAlpha=Math.max(0,p.life); ctx.fillStyle=p.c; ctx.fillRect(p.x,p.y,4,4); }\n  ctx.globalAlpha=1;\n}\nfunction drawMini(){\n  const k=120/MW;\n  mctx.clearRect(0,0,120,120);\n  mctx.drawImage(miniBase,0,0);\n  stars.forEach(s=>{ if(!s.got){ mctx.fillStyle='#ffd84d'; mctx.beginPath(); mctx.arc(s.x*k,s.y*k,2.5,0,7); mctx.fill(); } });\n  [...guards,...minors].forEach(e=>{\n    mctx.fillStyle=e.friend?'#ff69b4':e.color; mctx.beginPath(); mctx.arc(e.x*k,e.y*k,2,0,7); mctx.fill();\n  });\n  mctx.fillStyle='#ff8a00'; mctx.beginPath(); mctx.arc(MOTOR.x*k,MOTOR.y*k,3.5,0,7); mctx.fill();\n  mctx.save(); mctx.translate(P.x*k,P.y*k); mctx.rotate(P.a);\n  mctx.fillStyle='#e0245e'; mctx.beginPath(); mctx.moveTo(5,0); mctx.lineTo(-3,3); mctx.lineTo(-3,-3); mctx.closePath(); mctx.fill();\n  mctx.restore();\n}\nfunction updateHUD(){\n  $('hearts').textContent='❤️'.repeat(S.hearts)+'🤍'.repeat(Math.max(0,5-S.hearts));\n  $('nC').textContent=S.stars; $('gC').textContent=S.freed; $('mC').textContent=S.mapPieces;\n}\n\n/* ---------- Controlli ---------- */\nconst KEYMAP={ArrowUp:'u',ArrowDown:'d',ArrowLeft:'l',ArrowRight:'r'};\nwindow.addEventListener('keydown',e=>{\n  if(KEYMAP[e.key]){ hold[KEYMAP[e.key]]=true; e.preventDefault(); }\n  if(e.key==='z'||e.key==='Z') stunAction();\n  if(e.key==='x'||e.key==='X') unhookAction();\n});\nwindow.addEventListener('keyup',e=>{ if(KEYMAP[e.key]) hold[KEYMAP[e.key]]=false; });\nwindow.addEventListener('blur',()=>Object.keys(hold).forEach(k=>hold[k]=false));\ndocument.addEventListener('visibilitychange',()=>{\n  if(document.hidden) Object.keys(hold).forEach(k=>hold[k]=false);\n});\ndocument.querySelectorAll('[data-k]').forEach(b=>{\n  const k=b.dataset.k;\n  b.addEventListener('pointerdown',e=>{ e.preventDefault(); hold[k]=true; });\n  ['pointerup','pointerleave','pointercancel'].forEach(ev=>b.addEventListener(ev,()=>hold[k]=false));\n});\n$('bStun').addEventListener('click',stunAction);\n$('bUnhook').addEventListener('click',unhookAction);\n$('ctx').addEventListener('click',()=>{ if(ctxFn) ctxFn(); });\n$('bFull').addEventListener('click',()=>{\n  if(!document.fullscreenElement) document.documentElement.requestFullscreen?.().catch(()=>{});\n  else document.exitFullscreen?.();\n});\n$('bRot').addEventListener('click',()=>$('game').classList.toggle('rot'));\n$('startBtn').addEventListener('click',()=>{\n  initAudio(); S.started=true; $('start').classList.add('hidden');\n  speak('Ciao! Sono Robottino. Andiamo a trovare le stelle!',4000);\n});\n$('again').addEventListener('click',()=>location.reload());\n\n/* ---------- Ciclo di gioco ---------- */\nsetupWorld();\nlet last=performance.now();\nfunction loop(now){\n  const dt=Math.min(.05,(now-last)/1000); last=now;\n  update(dt);\n  render();\n  drawWorld(now);\n  drawParts();\n  drawMini();\n  updateHUD();\n  updateCtx();\n  requestAnimationFrame(loop);\n}\nrequestAnimationFrame(loop);\n<\/script>\n<\/body>\n<\/html>\n", percorso:"<!DOCTYPE html>\n<html lang=\"it\">\n<head>\n<meta charset=\"UTF-8\">\n<meta name=\"viewport\" content=\"width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover\">\n<title>Il Percorso delle Stelle Cadute - Robottino<\/title>\n<style>\n*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}\nhtml,body{height:100%;overflow:hidden;background:#fff8ec;font-family:system-ui,-apple-system,\"Segoe UI\",sans-serif;user-select:none;-webkit-user-select:none;touch-action:none}\n#game{position:fixed;inset:0;background:#fff8ec;overflow:hidden}\n#game.rot{width:100vh;height:100vw;top:0;left:100vw;transform-origin:top left;transform:rotate(90deg)}\n#view{position:absolute;inset:0;width:100%;height:100%;display:block}\n#hud{position:absolute;top:10px;left:10px;background:rgba(255,255,255,.9);border-radius:14px;padding:8px 12px;font-size:15px;line-height:1.5;color:#3b3550;box-shadow:0 2px 8px rgba(80,60,120,.2);z-index:4}\n#hud b{color:#c2185b}\n#tools{position:absolute;top:118px;left:10px;display:flex;flex-direction:column;gap:6px;z-index:4}\n.tool{border:none;border-radius:10px;padding:6px 10px;font-size:12px;background:rgba(255,255,255,.92);color:#5b3f8c;font-weight:700;box-shadow:0 2px 6px rgba(0,0,0,.15);pointer-events:auto}\n#zone{position:absolute;top:16%;left:50%;transform:translate(-50%,-50%);background:rgba(255,255,255,.94);padding:8px 18px;border-radius:20px;font-weight:700;font-size:18px;color:#5b3f8c;opacity:0;transition:opacity .4s;pointer-events:none;white-space:nowrap;z-index:4;box-shadow:0 4px 12px rgba(80,60,120,.2)}\n#zone.show{opacity:1}\n#ctx{position:absolute;left:50%;top:42%;transform:translate(-50%,-50%);padding:14px 22px;font-size:18px;font-weight:800;border:none;border-radius:999px;background:#ff8fb1;color:#fff;box-shadow:0 6px 0 #d4577e;display:none;z-index:5;pointer-events:auto}\n#bubble{position:absolute;transform:translate(-50%,-100%);width:230px;background:#fff;border-radius:16px;padding:10px 12px;font-size:15px;line-height:1.35;color:#3b3550;text-align:center;box-shadow:0 4px 12px rgba(80,60,120,.25);opacity:0;transition:opacity .3s;pointer-events:none;z-index:6}\n#bubble.show{opacity:1}\n#controls{position:absolute;left:0;right:0;bottom:0;height:172px;display:flex;justify-content:space-between;align-items:flex-end;padding:0 12px 14px;pointer-events:none;z-index:7}\n#pad{display:flex;gap:10px}\n.pb{width:76px;height:76px;border:none;border-radius:22px;background:rgba(255,255,255,.92);color:#5b3f8c;font-size:28px;font-weight:800;box-shadow:0 5px 0 rgba(91,63,140,.25);pointer-events:auto}\n#right{display:flex;flex-direction:column;gap:8px;width:130px}\n.big{height:50px;border:none;border-radius:16px;font-weight:800;font-size:14px;color:#3b3550;box-shadow:0 4px 0 rgba(0,0,0,.18);pointer-events:auto}\n.overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(255,248,236,.92);z-index:30;padding:16px}\n.hidden{display:none!important}\n.card{background:#fff;border-radius:22px;padding:22px 20px;max-width:380px;width:100%;text-align:center;box-shadow:0 8px 24px rgba(80,60,120,.25);color:#3b3550}\n.card h1{font-size:22px;color:#5b3f8c;margin-bottom:8px}\n.card h2{font-size:18px;color:#c2185b;margin-bottom:6px}\n.card p{font-size:15px;line-height:1.45;margin:8px 0}\n.btn{margin-top:12px;border:none;border-radius:999px;padding:14px 30px;font-size:18px;font-weight:800;background:#7fd1ff;color:#24405e;box-shadow:0 5px 0 #4fa6d6;pointer-events:auto}\n#qOpts{display:flex;flex-direction:column;gap:8px;margin-top:10px}\n.opt{border:none;border-radius:14px;padding:12px;font-size:16px;font-weight:700;background:#ffe9a8;color:#3b3550;box-shadow:0 4px 0 #e0b84d;pointer-events:auto}\n#qMsg{min-height:44px;color:#5b3f8c;font-weight:700}\n<\/style>\n<\/head>\n<body>\n<div id=\"game\">\n  <canvas id=\"view\"><\/canvas>\n  <div id=\"hud\">\n    <div>⭐ Nuclei: <b id=\"nC\">0<\/b>/5<\/div>\n    <div>🤝 Guardiani: <b id=\"gC\">0<\/b>/5<\/div>\n    <div>🗺️ Mappa: <b id=\"mC\">0<\/b>/5<\/div>\n  <\/div>\n  <div id=\"tools\">\n    <button class=\"tool\" id=\"bFull\">⛶ Schermo intero<\/button>\n    <button class=\"tool\" id=\"bRot\">⟳ Ruota schermo<\/button>\n  <\/div>\n  <div id=\"zone\"><\/div>\n  <div id=\"bubble\"><\/div>\n  <button id=\"ctx\"><\/button>\n  <div id=\"controls\">\n    <div id=\"pad\">\n      <button class=\"pb\" data-k=\"l\">◀<\/button>\n      <button class=\"pb\" data-k=\"r\">▶<\/button>\n    <\/div>\n    <div id=\"right\">\n      <button class=\"big\" id=\"bStun\" style=\"background:#ffd36b\">STORDISCI<\/button>\n      <button class=\"big\" id=\"bUnhook\" style=\"background:#b9a5ff\">TOGLI CUFFIE<\/button>\n    <\/div>\n  <\/div>\n\n  <div id=\"start\" class=\"overlay\">\n    <div class=\"card\">\n      <h1>Il Percorso delle Stelle Cadute<\/h1>\n      <p>Le stelle sono cadute dal cielo e si sono nascoste lungo il percorso. Gli alieni hanno messo le cuffie con antenne ai Guardiani. Aiuta Robottino a liberarli, a trovare le stelle e a riaccendere il Motore delle Stelle!<\/p>\n      <p>◀ ▶ per camminare. Da tastiera: frecce, Z per stordire, X per togliere le cuffie.<\/p>\n      <button class=\"btn\" id=\"startBtn\">Inizia!<\/button>\n    <\/div>\n  <\/div>\n\n  <div id=\"quiz\" class=\"overlay hidden\">\n    <div class=\"card\">\n      <h2 id=\"qName\"><\/h2>\n      <p id=\"qRole\"><\/p>\n      <p id=\"qQ\" style=\"font-size:18px;font-weight:700\"><\/p>\n      <div id=\"qOpts\"><\/div>\n      <p id=\"qMsg\"><\/p>\n    <\/div>\n  <\/div>\n\n  <div id=\"win\" class=\"overlay hidden\">\n    <div class=\"card\">\n      <h1>Sei un vero Guardiano delle Stelle! ⭐<\/h1>\n      <p>Il Motore delle Stelle si è riacceso e il mondo è di nuovo luminoso. Festa di stelle!<\/p>\n      <button class=\"btn\" id=\"again\">Gioca ancora<\/button>\n    <\/div>\n  <\/div>\n<\/div>\n\n<script>\nconst $=id=>document.getElementById(id);\nconst game=$('game'), cv=$('view'), ctx=cv.getContext('2d');\nconst VH=360, GY=262, PT=248, ZN=6, ZL=1100, L=ZN*ZL, MOTOR_X=L-140, TAU=Math.PI*2;\nlet dpr=1, scl=1, vw=480, cam=0, T=0;\nconst hold={l:false,r:false};\nconst H1=n=>{const x=Math.sin(n*127.1+311.7)*43758.5453;return x-Math.floor(x);};\nconst rnd=(a,b)=>a+Math.random()*(b-a);\nconst clamp=(v,a,b)=>Math.max(a,Math.min(b,v));\nconst mod=(a,m)=>((a%m)+m)%m;\n\nconst ZONES=[\n {name:'Città',sky:['#8fd3ff','#e9f8ff'],hill:'#a9d4f5',grass:'#8fdc7e',path:'#f7e6bf',stone:'#ecd49e',prop:'house',msg:'Benvenuto in Città! Le case hanno tanti colori.'},\n {name:'Scuola',sky:['#ffd98a','#fff8e1'],hill:'#f2c46d',grass:'#a6e07a',path:'#f5e1c0',stone:'#e8ccA0',prop:'book',msg:'Siamo nella Scuola! Ci sono tanti libri colorati.'},\n {name:'Parco',sky:['#7fe0c8','#e9fff6'],hill:'#6fcf9f',grass:'#7fd46b',path:'#f3e8c8',stone:'#e1d2a8',prop:'tree',msg:'Nel Parco ci sono fiori e alberi gentili.'},\n {name:'Stazione',sky:['#ffab8f','#ffe6d6'],hill:'#f29c86',grass:'#9ad67a',path:'#ebd6cc',stone:'#d9bfb3',prop:'clock',msg:'Alla Stazione i treni fanno tuuut, che bello!'},\n {name:'Fabbrica Aliena',sky:['#b89cff','#f0e6ff'],hill:'#9f7fe8',grass:'#8fd3a0',path:'#e4dcf5',stone:'#cfc4e8',prop:'gear',msg:'Fabbrica Aliena: qui le luci fanno ballare i colori.'},\n {name:'Nave Madre',sky:['#6fcfff','#dff6ff'],hill:'#8fb0e6',grass:'#a0e0e8',path:'#dcecf7',stone:'#c4dcef',prop:'porthole',msg:'Siamo sulla Nave Madre! Il Motore è vicino!'}\n];\nconst GUARD_DEFS=[\n {name:'Astra',role:'Cavaliere delle Stelle, Guardiana della Soglia',color:'#ffb3d9',zone:0,\n  quiz:{q:'Quante punte ha una stella comune?',opts:['3','5','8'],a:1,hint:'Conta le punte una alla volta!'},\n  clue:\"Il Motore dorme nell'ultima zona, in fondo al percorso.\"},\n {name:'Titano',role:'Golem di Cristallo, Guardiano del Corridoio',color:'#9be7ff',zone:1,\n  quiz:{q:'Di che colore è il cielo in una bella giornata?',opts:['Azzurro','Verde','Viola'],a:0,hint:'Pensa al sole e alle nuvole!'},\n  clue:'Le stelle amano i posti pieni di luce e di colori.'},\n {name:'Oracolo',role:'Guardiano delle Stelle',color:'#c9b6ff',zone:2,\n  quiz:{q:'Quale animale fa \"miao\"?',opts:['Cane','Gatto','Mucca'],a:1,hint:'È il tuo amico peloso con i baffi!'},\n  clue:'Cerca le frecce colorate: ti porteranno avanti.'},\n {name:'Scout',role:'Drone Esploratore, Guardiano degli Angoli',color:'#ffe49b',zone:3,\n  quiz:{q:'Quante zampe ha un cane?',opts:['Due','Quattro','Sei'],a:1,hint:'Pensa a come corre il tuo cane!'},\n  clue:'Negli angoli si nascondono le sorprese più belle.'},\n {name:'Regina',role:'Guardiana del Cuore, Boss finale',color:'#ff9bb0',zone:5,\n  quiz:{q:'Quanti giorni ha una settimana?',opts:['5','7','10'],a:1,hint:'Lunedì, martedì, mercoledì...!'},\n  clue:'Il Motore ha bisogno di tutti i Nuclei per brillare!'}\n];\nconst MINOR_DEFS=[\n {kind:'alieno',name:'Zippo',color:'#9be79b',msg:'Grazie! Ti regalo un cuoricino!'},\n {kind:'robot',name:'Bip',color:'#c9d3e3',msg:'Bip bop! Ora sono tuo amico!'},\n {kind:'papera',name:'Qua',color:'#ffe066',msg:'Qua qua! Grazie, ti voglio bene!'}\n];\n\nlet GUARDS=[], MINORS=[], STARS=[], PROPS=[], PARTS=[];\nconst CLOUDS=[];\nfor(let i=0;i<24;i++) CLOUDS.push({x:i*300+H1(i+7)*120, y:24+H1(i*3)*70, s:.7+H1(i+90)*.7});\nfor(let z=0;z<ZN;z++) for(let k=0;k<12;k++){\n  const h=H1(z*50+k+1);\n  PROPS.push({x:z*ZL+30+k*90+h*40, z, h, kind:ZONES[z].prop});\n}\n\nconst S={started:false,paused:false,won:false,hidden:false,celebrate:false,celebrateT:0,\n         stars:0,freed:0,mapPieces:0,zone:-1,motorHint:false,blockT:-10};\nconst P={x:60,facing:1,walkT:0,moving:false};\nlet speakT=null, zoneT=null, ctxFn=null;\n\n/* ---------- Audio ---------- */\nlet AC=null;\nfunction initAudio(){ if(!AC) AC=new (window.AudioContext||window.webkitAudioContext)(); if(AC.state==='suspended') AC.resume(); }\nfunction beep(f=660,d=.15,type='sine',vol=.08){\n  if(!AC) return;\n  const o=AC.createOscillator(), g=AC.createGain();\n  o.type=type; o.frequency.value=f;\n  g.gain.setValueAtTime(vol,AC.currentTime);\n  g.gain.exponentialRampToValueAtTime(.0001,AC.currentTime+d);\n  o.connect(g).connect(AC.destination); o.start(); o.stop(AC.currentTime+d);\n}\nfunction chime(){ [523,659,784,1046].forEach((f,i)=>setTimeout(()=>beep(f,.25,'triangle',.06),i*110)); }\n\n/* ---------- Mondo ---------- */\nfunction setupWorld(){\n  GUARDS=GUARD_DEFS.map((d,i)=>{\n    const home=d.zone*ZL+640+rnd(-30,30);\n    return Object.assign({},d,{kind:'guard',home,x:home,dir:1,range:70,spd:22,\n      stunned:false,stunT:0,headphones:true,friend:false,quizDone:false,warned:false,ph:i});\n  });\n  MINORS=[0,1,2,3,4,5].map(i=>{\n    const home=i*ZL+320+rnd(-40,40);\n    return Object.assign({},MINOR_DEFS[i%3],{kind:MINOR_DEFS[i%3].kind,home,x:home,dir:-1,range:60,spd:30,\n      stunned:false,stunT:0,headphones:true,friend:false,warned:false,ph:i*1.3});\n  });\n  STARS=[0,1,2,3,4].map(z=>({x:z*ZL+430+rnd(0,220),got:false,ph:rnd(0,6)}));\n  PARTS=[];\n  S.stars=0; S.freed=0; S.mapPieces=0; S.zone=-1; S.won=false; S.motorHint=false;\n  P.x=60; cam=0;\n}\n\n/* ---------- Azioni ---------- */\nfunction speak(t,ms=3500){\n  const b=$('bubble'); b.textContent=t; b.classList.add('show');\n  clearTimeout(speakT); speakT=setTimeout(()=>b.classList.remove('show'),ms);\n}\nfunction showZone(name){\n  const z=$('zone'); z.textContent=name; z.classList.add('show');\n  clearTimeout(zoneT); zoneT=setTimeout(()=>z.classList.remove('show'),2600);\n}\nfunction burst(x,y,n,cols=['#ffd84d','#ff9bd1','#9be7ff']){\n  for(let i=0;i<n;i++) PARTS.push({x,y,vx:rnd(-140,140),vy:rnd(-220,-60),life:1,c:cols[i%cols.length]});\n}\nfunction nearTarget(){\n  let best=null,bd=100;\n  for(const e of [...GUARDS,...MINORS]){\n    if(e.friend) continue;\n    const d=Math.abs(e.x-P.x);\n    if(d<bd){best=e;bd=d;}\n  }\n  return best;\n}\nfunction stunAction(){\n  if(!S.started||S.paused||S.won) return;\n  const t=nearTarget();\n  if(!t){ speak(\"Avvicinati a un amico con le cuffie!\",2200); return; }\n  if(t.stunned) return;\n  t.stunned=true; t.stunT=7;\n  beep(880,.2,'triangle',.05);\n  speak(\"Zac! Piccola luce gentile... ora stai fermo!\",2500);\n}\nfunction unhookAction(){\n  if(!S.started||S.paused||S.won) return;\n  const t=nearTarget();\n  if(!t){ speak(\"Avvicinati a un amico con le cuffie!\",2200); return; }\n  if(!t.stunned){ speak(\"Prima stordiscilo con la Stella di Luce!\",2500); return; }\n  t.stunned=false; t.headphones=false; t.friend=true;\n  chime(); burst(t.x,GY-100,40,['#ff8fb1','#ffb3d9','#ffe066']);\n  if(t.kind==='guard'){\n    S.freed++;\n    speak(`Grazie ${t.name}! Rispondi alla domandina per il tuo pezzo di mappa!`,4000);\n    openQuiz(t);\n  } else speak(t.msg,3000);\n}\nfunction winAction(){\n  S.won=true; S.celebrate=true; chime(); burst(P.x,GY-120,80);\n  $('win').classList.remove('hidden');\n}\nfunction readyToWin(){ return S.stars>=5 && S.freed>=5; }\n\nfunction openQuiz(g){\n  S.paused=true;\n  hold.l=false; hold.r=false;\n  $('qName').textContent=g.name; $('qRole').textContent=g.role; $('qQ').textContent=g.quiz.q;\n  $('qMsg').textContent='Rispondi per ricevere il tuo pezzo di mappa!';\n  const box=$('qOpts'); box.innerHTML='';\n  g.quiz.opts.forEach((o,i)=>{\n    const b=document.createElement('button'); b.className='opt'; b.textContent=o;\n    b.onclick=()=>{\n      if(g.quizDone) return;\n      if(i===g.quiz.a){\n        g.quizDone=true; S.mapPieces++; chime(); burst(P.x,GY-100,60);\n        $('qMsg').textContent='Bravissimo! Hai trovato un pezzo di mappa!';\n        setTimeout(()=>{ $('quiz').classList.add('hidden'); S.paused=false; speak(g.clue,5000); },1400);\n      } else {\n        beep(330,.2,'sine',.05);\n        $('qMsg').textContent='Ci sei quasi! Ecco un aiutino: '+g.quiz.hint;\n      }\n    };\n    box.appendChild(b);\n  });\n  $('quiz').classList.remove('hidden');\n}\n\n/* ---------- Aggiornamento ---------- */\nfunction update(dt){\n  for(const p of PARTS){ p.x+=p.vx*dt; p.y+=p.vy*dt; p.vy+=200*dt; p.life-=dt*.8; }\n  PARTS=PARTS.filter(p=>p.life>0);\n  if(S.celebrate){ S.celebrateT-=dt; if(S.celebrateT<=0){ burst(P.x+rnd(-300,300),rnd(40,160),6); S.celebrateT=.2; } }\n  if(!S.started||S.paused||S.won||S.hidden) return;\n\n  const mv=(hold.r?1:0)-(hold.l?1:0);\n  if(mv){ P.x+=mv*105*dt; P.facing=mv; P.walkT+=dt*9; }\n  P.moving=mv!==0;\n  P.x=clamp(P.x,20,L-30);\n\n  // I Guardiani con le cuffie bloccano la strada finché non vengono liberati\n  for(const g of GUARDS){\n    if(g.friend) continue;\n    const dx=g.x-P.x;\n    if(Math.abs(dx)<44){\n      if(dx>0) P.x=Math.min(P.x,g.x-44); else P.x=Math.max(P.x,g.x+44);\n      if(mv!==0 && T-S.blockT>3){ S.blockT=T; speak(`Piano! C'è un Guardiano: ${g.name}. Stordiscilo con la Stella di Luce!`,3000); }\n    }\n  }\n\n  const target=clamp(P.x-vw*.4,0,Math.max(0,L-vw));\n  cam+=(target-cam)*Math.min(1,dt*6);\n\n  const z=Math.min(ZN-1,Math.floor(P.x/ZL));\n  if(z!==S.zone){ S.zone=z; showZone(ZONES[z].name); speak(ZONES[z].msg,3500); }\n\n  for(const e of [...GUARDS,...MINORS]){\n    if(e.friend) continue;\n    if(e.stunned){ e.stunT-=dt; if(e.stunT<=0) e.stunned=false; continue; }\n    const dx=Math.abs(e.x-P.x);\n    if(dx>80){\n      e.x+=e.dir*e.spd*dt;\n      if(e.x>e.home+e.range) e.dir=-1;\n      if(e.x<e.home-e.range) e.dir=1;\n    }\n    if(dx<120 && !e.warned){\n      e.warned=true;\n      if(e.kind==='guard') speak(`Attento, c'è un Guardiano: ${e.name}!`,2500);\n    }\n    if(dx>240) e.warned=false;\n  }\n\n  for(const s of STARS){\n    if(!s.got && Math.abs(s.x-P.x)<40){\n      s.got=true; S.stars++; chime(); burst(s.x,GY-70,30);\n      speak(S.stars>=5?'Hai tutti i Nuclei! Ora trova il Motore!':`Bravo, hai trovato una stella! (${S.stars}/5)`,3000);\n    }\n  }\n}\nfunction updateCtx(){\n  if(S.won){ ctx_hide(); return; }\n  let label=null, fn=null;\n  const t=nearTarget();\n  const nearMotor=Math.abs(P.x-MOTOR_X)<90;\n  if(t){\n    if(!t.stunned){ label='STORDISCI!'; fn=stunAction; }\n    else { label='TOGLI LE CUFFIE'; fn=unhookAction; }\n  } else if(nearMotor){\n    if(readyToWin()){ label='RIACCENDI IL MOTORE'; fn=winAction; }\n    if(!S.motorHint){\n      S.motorHint=true;\n      speak(readyToWin()?'Sei quasi arrivato! Premi RIACCENDI IL MOTORE!':`Mi servono ancora ${Math.max(0,5-S.stars)} Nuclei e ${Math.max(0,5-S.freed)} Guardiani!`,3500);\n    }\n  } else S.motorHint=false;\n  if(label){ $('ctx').style.display='block'; $('ctx').textContent=label; ctxFn=fn; }\n  else ctx_hide();\n}\nfunction ctx_hide(){ $('ctx').style.display='none'; ctxFn=null; }\n\n/* ---------- Disegno: utilità ---------- */\nfunction rr(x,y,w,h,r){\n  ctx.beginPath(); ctx.moveTo(x+r,y);\n  ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r);\n  ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath();\n}\nfunction glow(x,y,r,rgb,a=1){\n  const g=ctx.createRadialGradient(x,y,0,x,y,r);\n  g.addColorStop(0,`rgba(${rgb},${a})`); g.addColorStop(1,`rgba(${rgb},0)`);\n  ctx.fillStyle=g; ctx.beginPath(); ctx.arc(x,y,r,0,TAU); ctx.fill();\n}\nfunction star(x,y,r,rot,fill){\n  ctx.beginPath();\n  for(let i=0;i<10;i++){\n    const rad=i%2?r*.45:r, a=rot+i*Math.PI/5-Math.PI/2;\n    ctx.lineTo(x+Math.cos(a)*rad,y+Math.sin(a)*rad);\n  }\n  ctx.closePath(); ctx.fillStyle=fill; ctx.fill();\n}\nfunction heart(x,y,s,col){\n  ctx.fillStyle=col;\n  ctx.beginPath(); ctx.arc(x-s*.25,y,s*.25,0,TAU); ctx.arc(x+s*.25,y,s*.25,0,TAU); ctx.fill();\n  ctx.beginPath(); ctx.moveTo(x-s*.5,y+s*.05); ctx.lineTo(x+s*.5,y+s*.05); ctx.lineTo(x,y+s*.5); ctx.closePath(); ctx.fill();\n}\nfunction label(text,x,y,size,color){\n  ctx.font=`bold ${size}px system-ui`; ctx.textAlign='center';\n  ctx.lineWidth=4; ctx.strokeStyle='rgba(255,255,255,.95)'; ctx.strokeText(text,x,y);\n  ctx.fillStyle=color; ctx.fillText(text,x,y);\n}\nfunction shade(hex,f){\n  const n=parseInt(hex.slice(1),16);\n  let r=n>>16, g=(n>>8)&255, b=n&255;\n  const k=f<0?0:255, a=Math.abs(f);\n  r=Math.round(r+(k-r)*a); g=Math.round(g+(k-g)*a); b=Math.round(b+(k-b)*a);\n  return `rgb(${r},${g},${b})`;\n}\n\n/* ---------- Disegno: sfondo ---------- */\nfunction drawCloud(x,y,s){\n  ctx.save(); ctx.translate(x,y); ctx.scale(s,s);\n  ctx.fillStyle='rgba(255,255,255,.92)';\n  ctx.beginPath(); ctx.arc(0,0,18,0,TAU); ctx.arc(20,-8,22,0,TAU); ctx.arc(42,0,17,0,TAU);\n  ctx.fill(); rr(-6,0,58,14,7); ctx.fill();\n  ctx.restore();\n}\nfunction drawProp(kind,sx,h,t){\n  ctx.save(); ctx.translate(sx,PT-8);\n  if(kind==='house'){\n    const w=44+h*26, hh=50+h*34, cols=['#ffd6e0','#c9ecff','#fff1b8','#d5f5d0','#e7d4ff'];\n    ctx.fillStyle=cols[Math.floor(h*5)%5]; rr(-w/2,-hh,w,hh,6); ctx.fill();\n    ctx.fillStyle='#ff8a8a'; ctx.beginPath(); ctx.moveTo(-w/2-6,-hh); ctx.lineTo(0,-hh-26-h*12); ctx.lineTo(w/2+6,-hh); ctx.closePath(); ctx.fill();\n    ctx.fillStyle='#fff6a8'; ctx.fillRect(-w/2+8,-hh+12,10,10); ctx.fillRect(w/2-18,-hh+12,10,10);\n    ctx.fillStyle='#a06b4f'; ctx.fillRect(-6,-22,12,22);\n  } else if(kind==='book'){\n    const cols=['#ff8fb1','#7fd1ff','#ffd36b','#a6e07a','#b9a5ff','#ff9f6b'];\n    ctx.fillStyle='#c98f5b'; rr(-50,-84,100,84,6); ctx.fill();\n    for(let i=0;i<9;i++){\n      ctx.fillStyle=cols[Math.floor(H1(h*100+i)*cols.length)];\n      ctx.fillRect(-44+i*10,-6-(38+H1(h*7+i)*36),8,38+H1(h*7+i)*36);\n    }\n  } else if(kind==='tree'){\n    ctx.fillStyle='#8a5a3b'; ctx.fillRect(-5,-42,10,42);\n    ['#5fbf7a','#4caf6a','#7fd68e'].forEach((c,i)=>{\n      ctx.fillStyle=c; ctx.beginPath(); ctx.arc((i-1)*14,-58-(i%2)*8,27-i*3,0,TAU); ctx.fill();\n    });\n  } else if(kind==='clock'){\n    ctx.fillStyle='#ffb3a0'; rr(-22,-132,44,132,6); ctx.fill();\n    ctx.fillStyle='#e8806a'; ctx.beginPath(); ctx.moveTo(-26,-132); ctx.lineTo(0,-156); ctx.lineTo(26,-132); ctx.closePath(); ctx.fill();\n    ctx.fillStyle='#fff'; ctx.beginPath(); ctx.arc(0,-96,16,0,TAU); ctx.fill();\n    ctx.strokeStyle='#7a5a8a'; ctx.lineWidth=2; ctx.stroke();\n    ctx.save(); ctx.translate(0,-96); ctx.rotate(t*.5); ctx.fillStyle='#3b3550'; ctx.fillRect(-1,-12,2,12); ctx.restore();\n    ctx.save(); ctx.translate(0,-96); ctx.rotate(t*.04); ctx.fillStyle='#3b3550'; ctx.fillRect(-1,-9,2,9); ctx.restore();\n  } else if(kind==='gear'){\n    ctx.translate(0,-64); ctx.rotate(t*.8*(h>.5?1:-1));\n    ctx.fillStyle='#c9a8ff';\n    ctx.beginPath(); ctx.arc(0,0,28,0,TAU); ctx.fill();\n    for(let i=0;i<8;i++){ ctx.save(); ctx.rotate(i*Math.PI/4); ctx.fillRect(-5,-40,10,14); ctx.restore(); }\n    ctx.fillStyle='#f0e6ff'; ctx.beginPath(); ctx.arc(0,0,10,0,TAU); ctx.fill();\n  } else if(kind==='porthole'){\n    ctx.fillStyle='#e6f3fb'; rr(-40,-104,80,104,14); ctx.fill();\n    ctx.fillStyle='#6fa6d6'; ctx.beginPath(); ctx.arc(0,-58,26,0,TAU); ctx.fill();\n    ctx.strokeStyle='#9fb8c8'; ctx.lineWidth=4; ctx.stroke();\n    for(let i=0;i<4;i++) star(-12+i*8,-64+(i%2)*10,3,0,'#ffffff');\n  }\n  ctx.restore();\n}\n\nfunction drawBackground(t){\n  const zc=ZONES[S.zone<0?0:S.zone];\n  const g=ctx.createLinearGradient(0,0,0,GY);\n  g.addColorStop(0,zc.sky[0]); g.addColorStop(1,zc.sky[1]);\n  ctx.fillStyle=g; ctx.fillRect(0,0,vw,VH);\n\n  glow(vw*.82,64,90,'255,250,200',.9);\n  ctx.fillStyle='#fff6c2'; ctx.beginPath(); ctx.arc(vw*.82,64,22,0,TAU); ctx.fill();\n\n  for(const c of CLOUDS){\n    const sx=mod(c.x-cam*.25,7200)-120;\n    if(sx>vw+120) continue;\n    drawCloud(sx,c.y,c.s);\n  }\n\n  ctx.fillStyle=zc.hill; ctx.beginPath(); ctx.moveTo(0,GY);\n  for(let sx=0;sx<=vw+20;sx+=12){\n    const wx=sx+cam*.35;\n    ctx.lineTo(sx,170+Math.sin(wx*.012)*18+Math.sin(wx*.031)*9);\n  }\n  ctx.lineTo(vw,GY); ctx.closePath(); ctx.fill();\n\n  ctx.fillStyle=zc.grass; ctx.fillRect(0,PT-20,vw,22);\n  ctx.fillStyle='#5fb35a';\n  for(let x=-mod(cam,28);x<vw;x+=28){\n    ctx.beginPath(); ctx.moveTo(x,PT-18); ctx.lineTo(x+4,PT-28); ctx.lineTo(x+8,PT-18); ctx.fill();\n  }\n\n  for(const p of PROPS){\n    const sx=p.x-cam;\n    if(sx<-130||sx>vw+130) continue;\n    drawProp(p.kind,sx,p.h,t);\n  }\n}\nfunction drawPath(){\n  const zc=ZONES[S.zone<0?0:S.zone];\n  ctx.fillStyle=zc.path; ctx.fillRect(0,PT,vw,VH-PT);\n  ctx.fillStyle=zc.stone;\n  for(let x=-mod(cam,60)-60;x<vw+60;x+=60){\n    ctx.beginPath(); ctx.ellipse(x,PT+28,22,7,0,0,TAU); ctx.fill();\n    ctx.beginPath(); ctx.ellipse(x+30,PT+62,22,7,0,0,TAU); ctx.fill();\n  }\n  ctx.fillStyle='rgba(255,255,255,.6)'; ctx.fillRect(0,PT,vw,3);\n}\nfunction drawMotor(t){\n  const mx=MOTOR_X-cam;\n  if(mx<-200||mx>vw+200) return;\n  ctx.fillStyle='#c9b6ff'; rr(mx-62,GY-6,124,14,7); ctx.fill();\n  const cy=GY-92;\n  glow(mx,cy,120,'255,190,90',.45+.15*Math.sin(t*2));\n  ctx.save(); ctx.translate(mx,cy);\n  ctx.lineWidth=3; ctx.strokeStyle='rgba(255,140,40,.85)';\n  ctx.save(); ctx.rotate(t*.6); ctx.beginPath(); ctx.ellipse(0,0,64,20,0,0,TAU); ctx.stroke(); ctx.restore();\n  ctx.save(); ctx.rotate(-t*.9+1); ctx.beginPath(); ctx.ellipse(0,0,46,16,0,0,TAU); ctx.stroke(); ctx.restore();\n  const cg=ctx.createRadialGradient(0,0,4,0,0,34);\n  cg.addColorStop(0,'#fffbe0'); cg.addColorStop(.5,'#ffd84d'); cg.addColorStop(1,'#ff8a00');\n  ctx.fillStyle=cg; ctx.beginPath(); ctx.arc(0,0,34,0,TAU); ctx.fill();\n  star(0,0,20,t,'#fff2a8');\n  ctx.restore();\n  label('Motore delle Stelle',mx,cy-80,14,'#5b3f8c');\n}\nfunction drawPickup(s,t){\n  const sx=s.x-cam;\n  if(sx<-60||sx>vw+60) return;\n  const y=GY-74+Math.sin(t*2+s.ph)*6;\n  glow(sx,y,38,'255,230,120',.85);\n  star(sx,y,12,t*1.5+s.ph,'#ffd84d');\n  star(sx,y,6,t,'#fff8c4');\n}\n\n/* ---------- Disegno: personaggi ---------- */\nfunction drawRobot(sx,t){\n  const bob=P.moving?Math.abs(Math.sin(P.walkT))*5:Math.sin(t*2)*1.5;\n  const swing=P.moving?Math.sin(P.walkT)*.35:-.3+Math.sin(t*2.5)*.25;\n  const legs=P.moving?Math.sin(P.walkT)*4:0;\n  const pulse=.5+.5*Math.sin(t*4);\n\n  ctx.save(); ctx.translate(sx,GY); ctx.scale(P.facing,1);\n  ctx.fillStyle='rgba(60,40,90,.2)'; ctx.beginPath(); ctx.ellipse(0,2,26,6,0,0,TAU); ctx.fill();\n  ctx.translate(0,-bob);\n\n  ctx.fillStyle='#7d8fb8';\n  rr(-17,-24,11,24+legs,4); ctx.fill();\n  rr(6,-24,11,24-legs,4); ctx.fill();\n\n  const bg=ctx.createLinearGradient(-26,-80,26,-20);\n  bg.addColorStop(0,'#f4fbff'); bg.addColorStop(1,'#9fd0ff');\n  ctx.fillStyle=bg; rr(-24,-78,48,58,18); ctx.fill();\n  ctx.fillStyle='#fff6c2'; rr(-13,-68,26,22,8); ctx.fill();\n  glow(0,-57,12,'255,120,170',.5+.4*pulse);\n\n  ctx.fillStyle='#cfe8ff'; rr(-30,-62,8,26,4); ctx.fill();\n\n  const hg=ctx.createLinearGradient(-26,-130,26,-84);\n  hg.addColorStop(0,'#ffffff'); hg.addColorStop(1,'#cfe8ff');\n  ctx.fillStyle=hg; rr(-25,-126,50,42,16); ctx.fill();\n  ctx.fillStyle='#2b3550'; rr(-17,-120,34,20,8); ctx.fill();\n\n  const blink=(t%3.6)<.12;\n  ctx.fillStyle='#9ff0ff';\n  if(blink){ ctx.fillRect(-11,-111,8,2); ctx.fillRect(3,-111,8,2); }\n  else { ctx.beginPath(); ctx.arc(-7,-110,4,0,TAU); ctx.arc(7,-110,4,0,TAU); ctx.fill(); }\n\n  ctx.strokeStyle='#ff7aa8'; ctx.lineWidth=2;\n  ctx.beginPath(); ctx.arc(0,-96,6,.15*Math.PI,.85*Math.PI); ctx.stroke();\n  glow(-18,-94,5,'255,140,170',.8); glow(18,-94,5,'255,140,170',.8);\n\n  ctx.strokeStyle='#4c5b80'; ctx.lineWidth=2.5;\n  ctx.beginPath(); ctx.moveTo(0,-126); ctx.lineTo(0,-138); ctx.stroke();\n  glow(0,-139,9,'255,92,138',.6+.4*pulse);\n  ctx.fillStyle='#ff5c8a'; ctx.beginPath(); ctx.arc(0,-139,3.5,0,TAU); ctx.fill();\n\n  ctx.save(); ctx.translate(22,-62); ctx.rotate(swing);\n  ctx.fillStyle='#cfe8ff'; rr(-4,0,8,26,4); ctx.fill();\n  ctx.restore();\n  const hx=22-Math.sin(swing)*26, hy=-62+Math.cos(swing)*26;\n  glow(hx,hy,22,'255,230,120',.6+.3*pulse);\n  star(hx,hy,11,t*2,'#ffd84d');\n  ctx.restore();\n}\nfunction drawGuard(g,sx,t){\n  const bob=Math.sin(t*2+g.ph)*2;\n  ctx.save(); ctx.translate(sx,GY);\n  ctx.fillStyle='rgba(60,40,90,.2)'; ctx.beginPath(); ctx.ellipse(0,2,28,6,0,0,TAU); ctx.fill();\n  if(!g.friend) glow(0,-70,68,'255,255,230',.3+.1*Math.sin(t*3+g.ph));\n  ctx.translate(0,bob);\n\n  const bg=ctx.createLinearGradient(-26,-70,26,0);\n  bg.addColorStop(0,g.color); bg.addColorStop(1,shade(g.color,-.15));\n  ctx.fillStyle=bg; rr(-26,-70,52,68,22); ctx.fill();\n  ctx.fillStyle='rgba(255,255,255,.8)';\n  ctx.beginPath(); ctx.arc(-30,-42,8,0,TAU); ctx.arc(30,-42,8,0,TAU); ctx.fill();\n  star(0,-42,7,0,'#ffd84d');\n\n  const hg=ctx.createLinearGradient(-30,-120,30,-66);\n  hg.addColorStop(0,'#ffffff'); hg.addColorStop(1,shade(g.color,.05));\n  ctx.fillStyle=hg; ctx.beginPath(); ctx.ellipse(0,-92,30,27,0,0,TAU); ctx.fill();\n\n  ctx.fillStyle='#3b3550';\n  if(g.friend){\n    ctx.strokeStyle='#3b3550'; ctx.lineWidth=2.5;\n    ctx.beginPath(); ctx.arc(-10,-94,4,Math.PI,TAU); ctx.arc(10,-94,4,Math.PI,TAU); ctx.stroke();\n    ctx.beginPath(); ctx.arc(0,-86,8,.1*Math.PI,.9*Math.PI); ctx.stroke();\n  } else {\n    ctx.beginPath(); ctx.arc(-10,-94,4.5,0,TAU); ctx.arc(10,-94,4.5,0,TAU); ctx.fill();\n    ctx.fillStyle='#fff'; ctx.beginPath(); ctx.arc(-8.5,-95.5,1.4,0,TAU); ctx.arc(11.5,-95.5,1.4,0,TAU); ctx.fill();\n    ctx.strokeStyle='#3b3550'; ctx.lineWidth=2;\n    ctx.beginPath(); ctx.arc(0,-84,8,.2*Math.PI,.8*Math.PI); ctx.stroke();\n  }\n  glow(-17,-86,5,'255,140,170',.7); glow(17,-86,5,'255,140,170',.7);\n\n  if(g.headphones){\n    ctx.strokeStyle='#4c5b80'; ctx.lineWidth=4;\n    ctx.beginPath(); ctx.arc(0,-94,36,Math.PI,TAU); ctx.stroke();\n    ctx.fillStyle='#4c5b80';\n    rr(-40,-102,11,24,5); ctx.fill(); rr(29,-102,11,24,5); ctx.fill();\n    ctx.strokeStyle='#4c5b80'; ctx.lineWidth=2.5;\n    ctx.beginPath(); ctx.moveTo(0,-130); ctx.lineTo(0,-144); ctx.stroke();\n    ctx.fillStyle='#ff5c8a'; ctx.beginPath(); ctx.arc(0,-146,4,0,TAU); ctx.fill();\n  }\n  if(g.stunned){\n    for(let i=0;i<3;i++){\n      const a=t*3+i*2.1;\n      star(Math.cos(a)*30,-150+Math.sin(a)*7,6,a,'#ffd84d');\n    }\n  }\n  if(g.friend) heart(26,-150+Math.sin(t*2)*3,12,'#ff6fa3');\n  label(g.name,0,-168,13,'#3b3550');\n  ctx.restore();\n}\nfunction drawMinor(m,sx,t){\n  const hop=m.friend?Math.abs(Math.sin(t*4+m.ph))*6:Math.sin(t*3+m.ph)*1.5;\n  ctx.save(); ctx.translate(sx,GY-hop);\n  ctx.fillStyle='rgba(60,40,90,.2)'; ctx.beginPath(); ctx.ellipse(0,hop+2,18,5,0,0,TAU); ctx.fill();\n  if(m.kind==='alieno'){\n    ctx.fillStyle=m.color; ctx.beginPath(); ctx.ellipse(0,-30,22,26,0,0,TAU); ctx.fill();\n    ctx.fillStyle='#fff'; ctx.beginPath(); ctx.ellipse(-8,-34,7,9,0,0,TAU); ctx.ellipse(8,-34,7,9,0,0,TAU); ctx.fill();\n    ctx.fillStyle='#2b2b40'; ctx.beginPath(); ctx.arc(-7,-33,4,0,TAU); ctx.arc(9,-33,4,0,TAU); ctx.fill();\n    ctx.strokeStyle='#4c5b80'; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(0,-56); ctx.lineTo(-6,-68); ctx.stroke();\n    star(-6,-70,4,0,'#ffd84d');\n  } else if(m.kind==='robot'){\n    ctx.fillStyle=m.color; rr(-18,-54,36,40,10); ctx.fill();\n    ctx.fillStyle='#2b3550'; rr(-12,-46,24,16,4); ctx.fill();\n    ctx.fillStyle='#9be7ff'; ctx.beginPath(); ctx.arc(-5,-38,2.5,0,TAU); ctx.arc(5,-38,2.5,0,TAU); ctx.fill();\n    ctx.strokeStyle='#4c5b80'; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(0,-54); ctx.lineTo(0,-64); ctx.stroke();\n    ctx.fillStyle='#ff5c8a'; ctx.beginPath(); ctx.arc(0,-66,3,0,TAU); ctx.fill();\n  } else {\n    ctx.fillStyle=m.color; ctx.beginPath(); ctx.ellipse(0,-26,24,20,0,0,TAU); ctx.fill();\n    ctx.beginPath(); ctx.arc(12,-44,14,0,TAU); ctx.fill();\n    ctx.fillStyle='#ff9f3a'; ctx.beginPath(); ctx.moveTo(24,-46); ctx.lineTo(36,-41); ctx.lineTo(24,-37); ctx.closePath(); ctx.fill();\n    ctx.fillStyle='#3b3550'; ctx.beginPath(); ctx.arc(14,-48,2.8,0,TAU); ctx.fill();\n  }\n  if(!m.friend){\n    ctx.strokeStyle='#4c5b80'; ctx.lineWidth=3;\n    ctx.beginPath(); ctx.arc(0,-44,20,Math.PI,TAU); ctx.stroke();\n  }\n  if(m.stunned){\n    for(let i=0;i<3;i++){ const a=t*3+i*2.1; star(Math.cos(a)*18,-74+Math.sin(a)*4,5,a,'#ffd84d'); }\n  }\n  if(m.friend) heart(0,-80+Math.sin(t*2)*2,10,'#ff6fa3');\n  label(m.name,0,-90,11,'#3b3550');\n  ctx.restore();\n}\n\nfunction drawParts(){\n  for(const p of PARTS){\n    ctx.globalAlpha=clamp(p.life,0,1);\n    star(p.x-cam,p.y,4,p.life*6,p.c);\n  }\n  ctx.globalAlpha=1;\n}\nfunction drawBar(){\n  const w=game.clientWidth, x0=w-176, y0=12, bw=164, bh=10;\n  ctx.fillStyle='rgba(255,255,255,.9)'; rr(x0-6,y0-6,bw+12,bh+12,10); ctx.fill();\n  const g=ctx.createLinearGradient(x0,0,x0+bw,0);\n  g.addColorStop(0,'#9fd0ff'); g.addColorStop(.5,'#c9b6ff'); g.addColorStop(1,'#ffd36b');\n  ctx.fillStyle=g; rr(x0,y0,bw,bh,5); ctx.fill();\n  for(const s of STARS){ ctx.fillStyle=s.got?'#ffd84d':'#d8cfe8'; ctx.beginPath(); ctx.arc(x0+s.x/L*bw,y0+bh/2,3.5,0,TAU); ctx.fill(); }\n  for(const e of GUARDS){ ctx.fillStyle=e.friend?'#ff69b4':e.color; ctx.beginPath(); ctx.arc(x0+e.x/L*bw,y0+bh/2,3.5,0,TAU); ctx.fill(); }\n  ctx.fillStyle='#ff8a00'; ctx.beginPath(); ctx.arc(x0+MOTOR_X/L*bw,y0+bh/2,4.5,0,TAU); ctx.fill();\n  ctx.fillStyle='#e0245e'; ctx.beginPath(); ctx.arc(x0+clamp(P.x/L,0,1)*bw,y0+bh/2,5,0,TAU); ctx.fill();\n}\n\nfunction positionBubble(){\n  const bx=(P.x-cam)*scl;\n  const b=$('bubble');\n  b.style.left=clamp(bx,130,game.clientWidth-130)+'px';\n  b.style.top=((GY-130)*scl)+'px';\n}\n\nfunction render(t){\n  ctx.setTransform(dpr*scl,0,0,dpr*scl,0,0);\n  drawBackground(t);\n  drawPath();\n  drawMotor(t);\n  for(const s of STARS) if(!s.got) drawPickup(s,t);\n  for(const m of MINORS){\n    const sx=m.x-cam;\n    if(sx>-60&&sx<vw+60) drawMinor(m,sx,t);\n  }\n  for(const g of GUARDS){\n    const sx=g.x-cam;\n    if(sx>-60&&sx<vw+60) drawGuard(g,sx,t);\n  }\n  drawRobot((P.x-cam),t);\n  drawParts();\n\n  ctx.setTransform(dpr,0,0,dpr,0,0);\n  drawBar();\n\n  positionBubble();\n  $('nC').textContent=S.stars;\n  $('gC').textContent=S.freed;\n  $('mC').textContent=S.mapPieces;\n}\n\n/* ---------- Controlli ---------- */\nconst KEYMAP={ArrowLeft:'l',ArrowRight:'r'};\nwindow.addEventListener('keydown',e=>{\n  if(KEYMAP[e.key]){ hold[KEYMAP[e.key]]=true; e.preventDefault(); }\n  if(e.key==='z'||e.key==='Z') stunAction();\n  if(e.key==='x'||e.key==='X') unhookAction();\n});\nwindow.addEventListener('keyup',e=>{ if(KEYMAP[e.key]) hold[KEYMAP[e.key]]=false; });\nwindow.addEventListener('blur',()=>{ hold.l=false; hold.r=false; });\ndocument.addEventListener('visibilitychange',()=>{\n  S.hidden=document.hidden;\n  if(S.hidden){ hold.l=false; hold.r=false; }\n});\ndocument.querySelectorAll('[data-k]').forEach(b=>{\n  const k=b.dataset.k;\n  b.addEventListener('pointerdown',e=>{ e.preventDefault(); hold[k]=true; });\n  ['pointerup','pointerleave','pointercancel'].forEach(ev=>b.addEventListener(ev,()=>hold[k]=false));\n});\n$('bStun').addEventListener('click',stunAction);\n$('bUnhook').addEventListener('click',unhookAction);\n$('ctx').addEventListener('click',()=>{ if(ctxFn) ctxFn(); });\n$('bFull').addEventListener('click',()=>{\n  if(!document.fullscreenElement) document.documentElement.requestFullscreen?.().catch(()=>{});\n  else document.exitFullscreen?.();\n});\n$('bRot').addEventListener('click',()=>{ game.classList.toggle('rot'); setTimeout(resize,50); });\n$('startBtn').addEventListener('click',()=>{\n  initAudio(); S.started=true; $('start').classList.add('hidden');\n  speak('Ciao! Sono Robottino. Andiamo a trovare le stelle!',4000);\n});\n$('again').addEventListener('click',()=>location.reload());\n\n/* ---------- Dimensioni e ciclo ---------- */\nfunction resize(){\n  const w=game.clientWidth, h=game.clientHeight;\n  dpr=Math.min(2,window.devicePixelRatio||1);\n  cv.width=Math.round(w*dpr); cv.height=Math.round(h*dpr);\n  scl=h/VH; vw=w/scl;\n}\nwindow.addEventListener('resize',resize);\nresize();\nsetupWorld();\n\nlet last=performance.now();\nfunction frame(now){\n  const dt=Math.min(.05,(now-last)/1000); last=now;\n  T=now/1000;\n  update(dt);\n  render(T);\n  updateCtx();\n  requestAnimationFrame(frame);\n}\nrequestAnimationFrame(frame);\n<\/script>\n<\/body>\n<\/html>\n"};
+  const box=document.getElementById('robGameBox'), fr=document.getElementById('robFrame');
+  function openRob(k){
+    try{ if(typeof showGameUI==='function') showGameUI(false); }catch(_){}
+    try{ if(typeof currentGame!=='undefined') currentGame=null; }catch(_){}
+    if(k==='labirinto'){ fr.style.height='300px'; fr.style.maxWidth='340px'; fr.style.margin='0 auto'; }
+    else { fr.style.height='min(70svh,520px)'; fr.style.maxWidth='none'; fr.style.margin='0'; }
+    const COMPACT='@media (max-height:360px){.card{padding:10px 12px;max-height:100%;overflow:auto}.card h1{font-size:16px;margin-bottom:4px}.card p{font-size:12px;line-height:1.35;margin:4px 0}.btn{margin-top:6px;padding:8px 20px;font-size:14px}#hud{font-size:11px;padding:4px 8px}#tools{top:auto;bottom:150px}.tool{font-size:10px;padding:4px 7px}}';
+    const src=(k==='labirinto')?GAMES[k].replace('</style>',COMPACT+'</style>'):GAMES[k];
+    fr.srcdoc=src; box.style.display='block';
+    box.scrollIntoView({behavior:'smooth',block:'start'});
+  }
+  document.querySelectorAll('[data-rob]').forEach(b=>b.addEventListener('click',()=>openRob(b.dataset.rob)));
+  document.getElementById('robClose').addEventListener('click',()=>{ fr.srcdoc=''; box.style.display='none'; });
+})();
+
+/* ---------- Robottino: azioni con movimenti coerenti ---------- */
+(function(){
+  const KEY='robottino.pet.v1', MAX_OFFLINE=8*3600e3, TICK=60e3;
+  const RATES={fame:-6,gioco:-5,pulizia:-3,energia:-4,bagno:-4};
+  const clamp=v=>Math.max(0,Math.min(100,v));
+  const DEF={fame:80,gioco:80,pulizia:80,energia:90,bagno:80,sleeping:false,last:Date.now()};
+  const $$=id=>document.getElementById(id);
+  const stage=()=>$$('robotStage');
+  const bodyEl=()=>document.querySelector('#robotStage .robot-body-svg');
+  const headEl=()=>document.querySelector('#robotStage .screen-wrap');
+  const miniEl=()=>document.querySelector('#robotStage .mini-bot');
+  const F=(l,t,r=0,o=1,s=1)=>({l,t,r,o,s});
+  let pet=load(), toyIdx=0, lastIdle=Date.now(), lastLine={};
+  let bedOn=false, blanketOn=false;
+  const lastWarn={fame:0,gioco:0,pulizia:0,energia:0,bagno:0};
+
+  const TOYS=[
+    {k:'palla',e:'⚽',mood:'enthusiastic',lines:['Guarda la palla che rimbalza! Boing, boing!','Palla! Prendila, prendila!','Ecco la palla, la lancio io!']},
+    {k:'aquilone',e:'🪁',mood:'happy',lines:['Il mio aquilone vola alto nel cielo!','Su su, più in alto!','Che vento gentile, aquilone mio!']},
+    {k:'robottino',e:'',mood:'laugh',lines:['Ciao amico! Giochiamo insieme!','Salta con me, salta!','Siamo due robottini che ballano!']},
+  ];
+  const DIALOG={
+    feed:{m:'happy',l:['Che buono! Grazie!','Mmm, quanto è buona la mela!','Ora ho la pancia piena!']},
+    wash:{m:'enthusiastic',l:['Sono di nuovo lucido come una stella!','Splash! Che bella schiuma!','Pulito e brillante!']},
+    charge:{m:'enthusiastic',l:['Ahh, ora ho più energia!','Zzzap! Batteria piena!','Mi sento carico come un razzo!']},
+    reset:{m:'happy',l:['Eccomi di nuovo, pronto per giocare!','Ricominciamo insieme, amico!']},
+    sleepBusy:{m:'sleepy',l:['Shh... sto dormendo.','Zzz... ancora un pochino...']},
+    lowFame:{m:'sad',l:['Ho tanta fame!','Brontolo, brontolo... ho fame!']},
+    lowGioco:{m:'curious',l:['Mi annoio, giochiamo?','Ho voglia di giocare!']},
+    lowPulizia:{m:'sad',l:['Mi sento un po\' sporco...','Ho bisogno di una bella lavata!']},
+    lowEnergia:{m:'sleepy',l:['Ho poca energia... ricaricami?','Mi sento un po\' stanco...']},
+    idle:{m:'affection',l:['Mi piace stare con te!','Vuoi raccontarmi qualcosa?','Sono felice quando ci sei tu!']},
+    bagno:{m:'curious',l:['Vado un attimo in bagno, torno subito!','Ahh, ecco fatto! Mi sento meglio.','Scusa, un attimo di privacy!']},
+    lowBagno:{m:'curious',l:['Devo andare in bagno!','Ho una certa urgenza... in bagno!']},
+    sleepStart:{m:'sleepy',l:['Mi metto a letto... buonanotte!','Sbadiglio... è ora di dormire.']},
+    wake:{m:'happy',l:['Buongiorno! Mi sono stiracchiato tanto!','Ho dormito benissimo, grazie!']}
+  };
+
+  function pick(key){
+    const arr=DIALOG[key].l; let t,n=0;
+    do{ t=arr[Math.floor(Math.random()*arr.length)]; n++; }while(arr.length>1 && t===lastLine[key] && n<8);
+    lastLine[key]=t; return t;
+  }
+  function say2(t,m){ try{ say(t,m||'happy'); }catch(_){} }
+  function speakKey(key){ say2(pick(key), DIALOG[key].m); }
+  function load(){ try{ const o=JSON.parse(localStorage.getItem(KEY)||'null'); if(o&&typeof o.fame==='number') return Object.assign({},DEF,o); }catch(_){} return Object.assign({},DEF); }
+  function save(){ try{ localStorage.setItem(KEY,JSON.stringify(pet)); }catch(_){} }
+  function storyBusy(){ return typeof storyRunning!=='undefined' && storyRunning; }
+  function talking(){ return typeof speaking!=='undefined' && speaking; }
+  function addStar(){ try{ if(typeof prog!=='undefined'){ prog.stars=(prog.stars||0)+1; saveProg(); } }catch(_){} }
+
+  // Oggetto che compare, si muove su punti fissi (percentuali dello schermo del robottino) e sparisce
+  function spawn(emoji, frames, ms){
+    const st=stage(); if(!st) return;
+    const el=document.createElement('span');
+    el.className='spawn'; el.textContent=emoji; st.appendChild(el);
+    const kf=frames.map(f=>({left:f.l+'%',top:f.t+'%',transform:`translate(-50%,-50%) rotate(${f.r}deg) scale(${f.s})`,opacity:f.o}));
+    el.animate(kf,{duration:ms,easing:'ease-in-out',fill:'forwards'}).onfinish=()=>el.remove();
+  }
+  // Movimento del corpo o della testa: usa translate/rotate/scale, così non cancella il centraggio
+  function motion(el, frames, ms){ lockBody(ms); if(el) el.animate(frames,{duration:ms,easing:'ease-in-out'}); }
+
+  function status(){
+    if(pet.sleeping) return 'Shh... Robottino sta dormendo. Zzz';
+    if(pet.bagno<25) return 'Devo andare in bagno!';
+    if(pet.energia<20) return 'Ho poca energia... ricaricami?';
+    if(pet.fame<25) return 'Ho tanta fame!';
+    if(pet.gioco<25) return 'Mi annoio, giochiamo?';
+    if(pet.pulizia<25) return 'Mi sento un po\' sporco...';
+    return 'Sto bene, grazie!';
+  }
+  function refresh(){
+    const set=(id,v)=>{ const el=$$(id); if(el) el.style.width=Math.round(v)+'%'; };
+    set('petFameBar',pet.fame); set('petBagnoBar',pet.bagno); set('petPlayBar',pet.gioco); set('petCleanBar',pet.pulizia); set('petEnergyBar',pet.energia);
+    const ps=$$('petStatus'); if(ps) ps.textContent=status();
+    const st=stage(); if(!st) return;
+    st.dataset.sleep=pet.sleeping?'1':'0';
+    const sb=$$('petSleep'); if(sb) sb.innerHTML=pet.sleeping?'<span class="pq-i">⏰</span><span>Svegliati</span>':'<span class="pq-i">😴</span><span>Dormi</span>';
+    setBed(pet.sleeping || storyBusy());
+    const needs=[['fame',pet.fame,'🍎'],['gioco',pet.gioco,'🎈'],['pulizia',pet.pulizia,'🛁'],['energia',pet.energia,'🔋'],['bagno',pet.bagno,'🚽']];
+    const low=needs.slice().sort((a,b)=>a[1]-b[1])[0];
+    const b=$$('toyBtn');
+    if(b){ b.textContent=low[2]; b.dataset.need=low[0]; b.setAttribute('aria-label','Robottino ha bisogno: '+low[0]); }
+    st.dataset.toy=(!pet.sleeping && low[1]<50 && !storyBusy())?'1':'0';
+  }
+  // Letto dall'alto: il robottino si sdraia sui cuscini mentre racconta
+  function setBed(on){
+    if(on===bedOn) return;
+    bedOn=on;
+    const st=stage(); if(!st) return;
+    const top=st.querySelector('.bed-top'), body=bodyEl(), head=headEl();
+    if(on){
+      st.dataset.bed='1'; lockBody(1200);
+      if(top) top.animate([{opacity:0},{opacity:1}],{duration:500,fill:'both'});
+      if(body) body.animate([{opacity:1},{opacity:0}],{duration:400,fill:'forwards'});
+      if(head) head.animate([{opacity:1},{opacity:0}],{duration:400,fill:'forwards'});
+      if(pet.sleeping) setBlanket(true);
+      turnBedHead(true);
+    } else {
+      setBlanket(false);
+      if(top) top.animate([{opacity:1},{opacity:0}],{duration:400,fill:'forwards'});
+      if(body) body.animate([{opacity:0},{opacity:1}],{duration:500,fill:'forwards'});
+      if(head) head.animate([{opacity:0},{opacity:1}],{duration:500,fill:'forwards'});
+      turnBedHead(false);
+      setTimeout(()=>{ st.dataset.bed='0'; },450);
+    }
+  }
+  // Testa a letto: ruota di 90 gradi quando si sdraia, torna dritta quando si alza
+  function turnBedHead(on){
+    const st=stage(); const bh=st&&st.querySelector('.bed-head'); if(!bh) return;
+    bh.animate(on?[{rotate:'0deg'},{rotate:'90deg'}]:[{rotate:'90deg'},{rotate:'0deg'}],{duration:900,delay:on?500:0,easing:'ease-in-out',fill:'forwards'});
+  }
+  // Coperta: scorre sopra il robottino dopo la buonanotte, e si toglie quando si sveglia
+  function setBlanket(on){
+    if(on===blanketOn) return;
+    blanketOn=on;
+    const st=stage(); const bl=st&&st.querySelector('.blanket'); if(!bl) return;
+    if(on) bl.animate([{transform:'translate(260px,0px)'},{transform:'translate(0px,0px)'}],{duration:900,easing:'ease-out',fill:'forwards'});
+    else bl.animate([{transform:'translate(0px,0px)'},{transform:'translate(260px,0px)'}],{duration:700,easing:'ease-in',fill:'forwards'});
+  }
+  function setSleep(on){ pet.sleeping=on; save(); setBlanket(on); refresh(); }
+
+  function applyElapsed(now){
+    const h=Math.min(Math.max(0,now-pet.last),MAX_OFFLINE)/3600e3;
+    pet.last=now;
+    if(h<=0) return;
+    if(pet.sleeping){
+      pet.energia=clamp(pet.energia+15*h); pet.fame=clamp(pet.fame-2*h);
+      pet.gioco=clamp(pet.gioco-h); pet.pulizia=clamp(pet.pulizia-h); pet.bagno=clamp(pet.bagno-h/2);
+    } else {
+      pet.fame=clamp(pet.fame+RATES.fame*h); pet.gioco=clamp(pet.gioco+RATES.gioco*h);
+      pet.pulizia=clamp(pet.pulizia+RATES.pulizia*h); pet.energia=clamp(pet.energia+RATES.energia*h); pet.bagno=clamp(pet.bagno+RATES.bagno*h);
+    }
+  }
+
+  // Azioni: ognuna ha un solo gesto chiaro, un oggetto che si vede e una battuta
+  function sleepBusy(){ motion(headEl(),[{rotate:'0deg'},{rotate:'-6deg'},{rotate:'4deg'},{rotate:'0deg'}],800); speakKey('sleepBusy'); }
+
+  function feed(){
+    if(pet.sleeping) return sleepBusy();
+    pet.fame=clamp(pet.fame+35); save(); refresh();
+    // la mela arriva dalla destra fino alla bocca, poi la testa fa due piccoli morsi
+    spawn('🍎',[F(82,62),F(68,44),F(54,32,0,1,.9),F(50,30,0,0,.4)],1000);
+    setTimeout(()=>motion(headEl(),[{rotate:'0deg'},{rotate:'6deg'},{rotate:'-4deg'},{rotate:'5deg'},{rotate:'0deg'}],800),1000);
+    speakKey('feed');
+  }
+  // Lava: la vasca sale, l'acqua si alza, il robottino scende dentro, fa le bolle e poi esce
+  function wash(){
+    if(pet.sleeping) return sleepBusy();
+    pet.pulizia=clamp(pet.pulizia+50); save(); refresh();
+    speakKey('wash');
+    const st=stage(); if(!st) return;
+    const back=st.querySelector('.bath-back'), front=st.querySelector('.bath-front'), water=st.querySelector('.bath-water');
+    const body=bodyEl(), head=headEl();
+    const dip=Math.round(st.clientHeight*0.14);
+    const slide=(a,b)=>[{transform:`translateY(${a}px)`,opacity:a?0:1},{transform:`translateY(${b}px)`,opacity:b?0:1}];
+    const sink=(a,b)=>[{translate:`0px ${a}px`},{translate:`0px ${b}px`}];
+    st.dataset.bath='1'; lockBody(4200);
+    if(back) back.animate(slide(40,0),{duration:500,easing:'ease-out',fill:'both'});
+    if(front) front.animate(slide(40,0),{duration:500,easing:'ease-out',fill:'both'});
+    if(water) water.animate([{transform:'translateY(30px)'},{transform:'translateY(0px)'}],{duration:700,delay:300,easing:'ease-out',fill:'both'});
+    setTimeout(()=>{
+      if(body) body.animate(sink(0,dip),{duration:600,easing:'ease-in',fill:'forwards'});
+      if(head) head.animate(sink(0,dip),{duration:600,easing:'ease-in',fill:'forwards'});
+    },700);
+    [44,50,56].forEach((x,i)=>setTimeout(()=>spawn('🫧',[F(x,64,0,0),F(x,54),F(x+(i%2?2:-2),38),F(x,24,0,0)],1400),1400+i*250));
+    setTimeout(()=>{ if(body) body.animate([{rotate:'0deg'},{rotate:'-3deg'},{rotate:'3deg'},{rotate:'-3deg'},{rotate:'0deg'}],{duration:1200,easing:'ease-in-out'}); },1300);
+    setTimeout(()=>{
+      if(body) body.animate(sink(dip,0),{duration:600,easing:'ease-out',fill:'forwards'});
+      if(head) head.animate(sink(dip,0),{duration:600,easing:'ease-out',fill:'forwards'});
+    },3000);
+    setTimeout(()=>{
+      if(back) back.animate(slide(0,40),{duration:450,easing:'ease-in',fill:'forwards'});
+      if(front) front.animate(slide(0,40),{duration:450,easing:'ease-in',fill:'forwards'});
+    },3700);
+    setTimeout(()=>{ st.dataset.bath='0'; },4200);
+  }
+  function charge(){
+    if(pet.sleeping){ pet.energia=clamp(pet.energia+40); save(); refresh(); return sleepBusy(); }
+    pet.energia=clamp(pet.energia+40); save(); refresh();
+    // un fulmine sul petto, il corpo si illumina due volte
+    spawn('⚡',[F(50,46,0,0,.5),F(50,42,0,1,1.2),F(50,38,0,0,1)],1100);
+    motion(bodyEl(),[{filter:'brightness(1)'},{filter:'brightness(1.35) drop-shadow(0 0 8px #ffe066)'},{filter:'brightness(1)'},{filter:'brightness(1.35) drop-shadow(0 0 8px #ffe066)'},{filter:'brightness(1)'}],1100);
+    speakKey('charge');
+  }
+  function miniHop(){
+    const m=miniEl(); if(!m) return;
+    m.style.display='block'; lockBody(1800); m.style.left='78%'; m.style.top='70%'; m.style.width='20cqw'; m.style.transform='translate(-50%,-50%)';
+    m.animate([{translate:'0px 0px'},{translate:'0px -16px'},{translate:'0px 0px'},{translate:'0px -16px'},{translate:'0px 0px'}],{duration:1800,easing:'ease-in-out'});
+    motion(bodyEl(),[{translate:'0px 0px'},{translate:'0px -6px'},{translate:'0px 0px'},{translate:'0px -6px'},{translate:'0px 0px'}],1800);
+    setTimeout(()=>{ m.style.display='none'; },1900);
+  }
+  // Aquilone: Robottino alza il suo braccio destro, la mano tiene il filo e l'aquilone sale e scende
+  function flyKite(){
+    const st=stage(); if(!st) return;
+    const arm=st.querySelector('#rightArm'); if(!arm) return;
+    const ms=4200;
+    lockBody(ms);
+    // durante il volo il braccio è guidato solo dal movimento dell'aquilone: spengo il movimento a riposo
+    arm.style.animation='none';
+    arm.animate([{rotate:'0deg'},{rotate:'-115deg',offset:.18},{rotate:'-115deg',offset:.9},{rotate:'0deg'}],{duration:ms,easing:'ease-in-out'});
+    setTimeout(()=>{ arm.style.animation=''; },ms+50);
+    motion(headEl(),[{rotate:'0deg'},{rotate:'-4deg'},{rotate:'0deg'}],ms);
+    // l'aquilone parte quando il braccio è alzato, dalla punta della mano
+    setTimeout(()=>{
+      const W=st.clientWidth, H=st.clientHeight;
+      const sr=st.getBoundingClientRect(), r=arm.getBoundingClientRect();
+      const hand={x:r.right-sr.left-30, y:r.top-sr.top+22};
+      const fly=ms*0.58;
+      const path=[[hand.x/W*100,hand.y/H*100],[84,12],[90,6],[80,9],[88,5],[84,12],[hand.x/W*100,hand.y/H*100]];
+      const opts={duration:fly,easing:'ease-in-out',fill:'forwards'};
+      const kite=document.createElement('span'); kite.className='spawn'; kite.textContent='🪁'; st.appendChild(kite);
+      const str=document.createElement('div'); str.className='kite-string'; st.appendChild(str);
+      kite.animate(path.map(p=>({left:p[0]+'%',top:p[1]+'%',transform:'translate(-50%,-50%)',opacity:1})),opts).onfinish=()=>kite.remove();
+      str.animate(path.map(p=>{
+        const dx=p[0]*W/100-hand.x, dy=p[1]*H/100-hand.y;
+        return {width:Math.hypot(dx,dy)+'px',transform:`translate(${hand.x}px,${hand.y}px) rotate(${Math.atan2(dy,dx)*180/Math.PI}deg)`};
+      }),opts).onfinish=()=>str.remove();
+    },ms*0.32);
+  }
+
+  function play(){
+    if(pet.sleeping) return sleepBusy();
+    const t=TOYS[toyIdx%TOYS.length]; toyIdx++;
+    pet.gioco=clamp(pet.gioco+35); addStar(); save(); refresh();
+    if(t.k==='palla'){
+      // la palla rimbalza sul pavimento a destra, il corpo salta a ogni rimbalzo
+      spawn('⚽',[F(84,88),F(78,64),F(72,88),F(68,72),F(66,88)],1500);
+      motion(bodyEl(),[{translate:'0px 0px'},{translate:'0px -12px'},{translate:'0px 0px'},{translate:'0px -8px'},{translate:'0px 0px'}],1500);
+    } else if(t.k==='aquilone'){
+      // Robottino alza il braccio, tiene il filo e fa volare l'aquilone in alto
+      flyKite();
+    } else {
+      miniHop();
+    }
+    say2(t.lines[Math.floor(Math.random()*t.lines.length)], t.mood);
+  }
+  function reset(){
+    if(!confirm('Vuoi far ripartire Robottino da capo?')) return;
+    pet=Object.assign({},DEF,{last:Date.now()}); save(); refresh();
+    motion(bodyEl(),[{rotate:'0deg'},{rotate:'360deg'}],1100);
+    speakKey('reset');
+  }
+
+  // Sonno: la testa si abbassa quando va a letto, il corpo si allunga quando si sveglia
+  window.__petSleep=()=>{ setSleep(true); motion(headEl(),[{rotate:'0deg'},{rotate:'-8deg'},{rotate:'0deg'}],1400); };
+  window.__petWake=()=>{ setSleep(false); motion(bodyEl(),[{scale:'1 1'},{scale:'1.03 0.97'},{scale:'1 1'}],900); };
+
+  // Bagno: la porta compare a sinistra, il robottino entra, poi esce
+  function bathroom(){
+    if(pet.sleeping) return sleepBusy();
+    const st=stage(); if(!st) return;
+    pet.bagno=clamp(pet.bagno+100); save(); refresh();
+    const W=st.clientWidth, dx=-Math.round(W*0.36), ms=2600;
+    const door=document.createElement('div'); door.className='wc-door'; door.textContent='🚽'; st.appendChild(door);
+    door.animate([{opacity:0},{opacity:1,offset:.12},{opacity:1,offset:.88},{opacity:0}],{duration:ms,fill:'forwards'});
+    setTimeout(()=>door.remove(),ms+50);
+    const walk=[{translate:'0px 0px',opacity:1},{translate:`${dx}px 0px`,opacity:1,offset:.4},{translate:`${dx}px 0px`,opacity:0,offset:.5},{translate:`${dx}px 0px`,opacity:0,offset:.62},{translate:'0px 0px',opacity:1,offset:1}];
+    lockBody(ms);
+    if(bodyEl()) bodyEl().animate(walk,{duration:ms,easing:'ease-in-out'});
+    if(headEl()) headEl().animate(walk,{duration:ms,easing:'ease-in-out'});
+    speakKey('bagno');
+  }
+  // Dormi: il robottino va a letto dall'alto, con la coperta; con Svegliati si alza
+  function toggleSleep(){
+    if(pet.sleeping){ setSleep(false); speakKey('wake'); return; }
+    setSleep(true); speakKey('sleepStart');
+  }
+  const NEED_ACT={fame:feed,gioco:play,pulizia:wash,energia:charge,bagno:bathroom};
+  $$('petFeed').addEventListener('click',feed);
+  $$('petPlay').addEventListener('click',play);
+  $$('petWash').addEventListener('click',wash);
+  $$('petCharge').addEventListener('click',charge);
+  $$('petReset').addEventListener('click',reset);
+  $$('petWC').addEventListener('click',bathroom);
+  $$('petSleep').addEventListener('click',toggleSleep);
+  $$('petFeather').addEventListener('click',()=>{ if(window.toggleFeather) window.toggleFeather(); });
+  window.__petAct={bagno:bathroom, dormi:()=>{ if(!pet.sleeping) toggleSleep(); }, sveglia:()=>{ if(pet.sleeping) setSleep(false); }};
+  $$('toyBtn').addEventListener('click',()=>{ const k=$$('toyBtn').dataset.need; if(NEED_ACT[k]) NEED_ACT[k](); });
+
+  applyElapsed(Date.now()); save(); refresh();
+  setInterval(()=>{
+    applyElapsed(Date.now()); save(); refresh();
+    const now=Date.now();
+    if(!pet.sleeping && !storyBusy() && !talking()){
+      const low=[['energia',pet.energia,'lowEnergia'],['fame',pet.fame,'lowFame'],['gioco',pet.gioco,'lowGioco'],['pulizia',pet.pulizia,'lowPulizia'],['bagno',pet.bagno,'lowBagno']]
+        .filter(x=>x[1]<20).sort((a,b)=>a[1]-b[1])[0];
+      if(low && now-lastWarn[low[0]]>30*60e3){ lastWarn[low[0]]=now; speakKey(low[2]); lastIdle=now; return; }
+      if(now-lastIdle>10*60e3){ lastIdle=now; speakKey('idle'); }
+    }
+  },TICK);
+  document.addEventListener('visibilitychange',()=>{ if(!document.hidden){ applyElapsed(Date.now()); save(); refresh(); } });
+})();
+
+/* ---------- Ingrandisci Robottino (quando non usi il Tamagotchi) ---------- */
+(function(){
+  const btn=document.getElementById('zoomBtn'); if(!btn) return;
+  btn.addEventListener('click',()=>{
+    const on=!document.body.classList.contains('robot-zoom');
+    document.body.classList.toggle('robot-zoom',on);
+    btn.setAttribute('aria-pressed',on?'true':'false');
+    btn.textContent=on?'🔎 Torna normale':'🔍 Ingrandisci Robottino';
+    if(!on) window.scrollTo({top:0,behavior:'smooth'});
+  });
+})();
+
+/* ---------- Solletico: "fai su", piuma sotto le ascelle, risata che cresce ---------- */
+(function(){
+  const q=sel=>document.querySelector('#robotStage '+sel);
+  const stage=()=>document.getElementById('robotStage');
+  let armsOn=false, tickOn=false, level=0, drawing=false, lastPt=null, lastSay=0, lowerT=0, armAnims=[], feather=null, jitter=false, last=performance.now();
+
+  feather=document.createElement('span');
+  feather.id='feather';
+  feather.textContent='🪶';
+  feather.style.cssText='position:absolute;display:none;font-size:min(9cqw,34px);pointer-events:none;z-index:9;transform:translate(-30%,-60%)';
+  stage().appendChild(feather);
+
+  // Braccia alzate: restano su finché non le abbassi
+  function arms(on){
+    if(on===armsOn) return;
+    armsOn=on;
+    const r=q('#rightArm'), l=q('#leftArm'); if(!r||!l) return;
+    if(on){
+      clearTimeout(lowerT);
+      r.style.animation='none'; l.style.animation='none';
+      armAnims=[r.animate([{rotate:'0deg'},{rotate:'-125deg'}],{duration:700,easing:'ease-out',fill:'forwards'}),
+                l.animate([{rotate:'0deg'},{rotate:'125deg'}],{duration:700,easing:'ease-out',fill:'forwards'})];
+    } else {
+      armAnims.forEach(a=>a.reverse());
+      clearTimeout(lowerT);
+      lowerT=setTimeout(()=>{ armAnims.forEach(a=>{ try{a.cancel();}catch(_){} }); r.style.animation=''; l.style.animation=''; armAnims=[]; },800);
+    }
+  }
+  function tickle(on){
+    tickOn=on;
+    stage().style.touchAction=on?'none':'';
+    feather.style.display=on?'block':'none';
+    if(on){ feather.style.left='71%'; feather.style.top='44%'; }
+    if(!on){ level=0; stopJitter(); }
+    if(on) arms(true);
+  }
+  function stopJitter(){
+    const b=q('.robot-body-svg'), h=q('.screen-wrap');
+    if(b){ b.style.translate=''; b.style.rotate=''; }
+    if(h){ h.style.rotate=''; }
+    jitter=false;
+  }
+
+  // Zone delle ascelle, in percentuale dello schermo del robottino
+  function inArmpit(x,y){
+    return (x>62&&x<80&&y>34&&y<56) || (x>20&&x<38&&y>34&&y<56);
+  }
+  function pt(e){
+    const r=stage().getBoundingClientRect();
+    return {px:e.clientX-r.left, py:e.clientY-r.top, x:(e.clientX-r.left)/r.width*100, y:(e.clientY-r.top)/r.height*100};
+  }
+  stage().addEventListener('pointerdown',e=>{
+    if(!tickOn||!armsOn) return;
+    const p=pt(e);
+    if(!inArmpit(p.x,p.y)) return;
+    e.stopPropagation();
+    drawing=true; lastPt=p;
+  },true);
+  stage().addEventListener('pointermove',e=>{
+    if(tickOn){ const p=pt(e); feather.style.left=p.px+'px'; feather.style.top=p.py+'px'; }
+    if(!drawing||!lastPt) return;
+    const p=pt(e);
+    if(!inArmpit(p.x,p.y)){ lastPt=p; return; }
+    const d=Math.min(Math.hypot(p.px-lastPt.px,p.py-lastPt.py),40);
+    level=Math.min(1,level+d*0.005);
+    lastPt=p;
+  },true);
+  const endDraw=()=>{ drawing=false; lastPt=null; };
+  stage().addEventListener('pointerup',endDraw,true);
+  stage().addEventListener('pointercancel',endDraw,true);
+
+  function followFinger(e){
+    if(!tickOn) return;
+    const r=stage().getBoundingClientRect();
+    const x=Math.max(0,Math.min(r.width,e.clientX-r.left)), y=Math.max(0,Math.min(r.height,e.clientY-r.top));
+    feather.style.left=x+'px'; feather.style.top=y+'px';
+  }
+  document.addEventListener('pointermove',followFinger,{passive:true});
+  document.addEventListener('pointerdown',followFinger,{passive:true});
+  document.addEventListener('touchmove',e=>{ if(tickOn) e.preventDefault(); },{passive:false});
+
+  // Risata: il corpo trema di più man mano che ride, e la voce cresce
+  function frame(now){
+    const dt=Math.min(.05,(now-last)/1000); last=now;
+    if(level>0) level=Math.max(0,level-dt*0.10);
+    if(tickOn && armsOn) window.bodyLockUntil=Math.max(window.bodyLockUntil||0,Date.now()+200);
+    if(level>0.01){
+      const t=now/1000, a=level;
+      const b=q('.robot-body-svg'), h=q('.screen-wrap');
+      const x=Math.sin(t*42)*(2+6*a), rr=Math.sin(t*34)*(1.5+4*a);
+      if(b){ b.style.translate=`${x}px 0px`; b.style.rotate=`${rr}deg`; }
+      if(h){ h.style.rotate=`${-rr*1.5}deg`; }
+      jitter=true;
+      if(typeof mood!=='undefined') mood='laugh';
+      if(level>0.12 && now-lastSay>(a>0.7?1600:2400)){
+        lastSay=now;
+        const txt = a>0.8 ? 'Ahahahah, non ce la faccio più, ancora!' : a>0.5 ? 'Ahahah, mi fai il solletico!' : a>0.25 ? 'Hihihi, dai!' : 'Hi hi!';
+        try{ say(txt,'laugh'); }catch(_){}
+      }
+    } else if(jitter){
+      stopJitter();
+      if(typeof mood!=='undefined' && typeof baseMood==='function') mood=baseMood();
+    }
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+
+  // Comandi vocali
+  // Tasto Piuma: accende o spegne il solletico
+  window.toggleFeather=function(){
+    if(tickOn){ tickle(false); arms(false); try{ say('Ok, la piuma va via. Ora sto fermo.','happy'); }catch(_){} }
+    else { tickle(true); try{ say('Prendo la piuma! Passala sotto le mie ascelle!','laugh'); }catch(_){} }
+  };
+  window.featherOn=()=>tickOn;
+  window.robotAction=function(a){
+    if(a==='piuma'){ if(!tickOn) window.toggleFeather(); return; }
+    if(a==='zaino'){ if(typeof applyAccessory==='function') applyAccessory('zaino'); return; }
+    const P=window.__petAct||{};
+    if(P[a]) P[a]();
+  };
+  window.checkTickleCommand=function(text){
+    const low=text.toLowerCase();
+    if(/\bfai\s+su\b|mani\s+su|braccia\s+su|alza\s+le\s+mani/.test(low)){
+      arms(true);
+      try{ say('Ok, ho le mani su! Ora passami la piuma sotto le braccia!','happy'); }catch(_){}
+      return true;
+    }
+    if(/solletic|piuma/.test(low)){
+      tickle(true);
+      try{ say('Prendo la piuma! Passala sotto le mie ascelle!','laugh'); }catch(_){}
+      return true;
+    }
+    if((armsOn||tickOn) && /basta|abbassa|mani\s+gi[uù]|smetti|fine\s+del\s+solletico/.test(low)){
+      tickle(false); arms(false);
+      try{ say('Uff, che divertimento! Ora mi riposo.','happy'); }catch(_){}
+      return true;
+    }
+    return false;
+  };
+})();
+
+/* ---------- Elenco dei movimenti, con prova ---------- */
+(function(){
+  const box=document.getElementById('movesList'); if(!box) return;
+  Object.keys(NEW_GESTURES).forEach(name=>{
+    const b=document.createElement('button');
+    b.type='button'; b.className='move-btn';
+    b.innerHTML='<span></span><small></small>';
+    b.firstChild.textContent=name.replace(/_/g,' ');
+    b.lastChild.textContent=GESTURE_WHEN[name]||'';
+    b.addEventListener('click',()=>{ window.bodyLockUntil=0; robotGesture(name); });
+    box.appendChild(b);
+  });
+})();
+
+/* ---------- Riporta il robottino in vista quando tocchi un'azione ---------- */
+(function(){
+  function bringRobotIntoView(){
+    const el=document.getElementById('robotStage'); if(!el) return;
+    const r=el.getBoundingClientRect();
+    if(r.top<-20 || r.bottom>innerHeight*0.75) el.scrollIntoView({behavior:'smooth',block:'start'});
+  }
+  document.addEventListener('click',e=>{
+    if(e.target.closest('#petActions,#movesList,#toyBtn')) setTimeout(bringRobotIntoView,60);
+  },true);
+})();
 </script>
 </body>
 </html>
